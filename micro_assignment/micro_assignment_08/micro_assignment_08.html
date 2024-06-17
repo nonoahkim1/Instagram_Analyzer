@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Micro 08</title>
+    <style>
+      .box {
+        width: 25px;
+        height: 25px;
+        border: 1px solid black;
+        float: left;
+      }
+      .yellow {
+        background-color: yellow;
+      }
+      .green {
+        background-color: green;
+      }
+      .blue {
+        background-color: blue;
+      }
+      .orange {
+        background-color: orange;
+      }
+      .red {
+        background-color: red;
+      }
+      .pink {
+        background-color: pink;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Micro 08</h1>
+
+    Pick a box color:
+    <select id="colordropdown">
+      <option value="yellow">Yellow</option>
+      <option value="green">Green</option>
+      <option value="blue">Blue</option>
+      <option value="orange">Orange</option>
+      <option value="red">Red</option>
+      <option value="pink">Pink</option>
+    </select>
+    <button id="add">Add a new box</button>
+
+    <div id="boxes"></div>
+
+    <!-- bring in the jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+
+    <!-- our custom code -->
+    <script>
+
+      // DOM references to our HTML elements
+      let btn = document.getElementById('add');
+      let boxes = document.getElementById('boxes')
+      let color = document.getElementById('colordropdown')
+
+      // jQuery document ready handler
+      // (all code should go inside of this function)
+      $(document).ready(function() {
+
+        // Task #1 -  when the page loads you should initiate
+        // an AJAX request to load the 'load_boxes.php' file --
+        // this file will query a database and will obtain the
+        // previously added colors.
+        //
+        // This file has been written for you, but you should read thorugh
+        // it as it represents a very common pattern for web development
+        // (using a small file to obtain specific data for a piece of an application)
+        // Note that the file uses a techique called JSON (JavaScript
+        // Object Notation) which will allow the PHP file to send over a fully
+        // populated Array that can be used right here in JavaScript!
+        //
+        // Once this information has been loaded you should create
+        // divs for each one of these boxes and add them to the page.
+        // This will have the effect of making the page "sticky" and
+        // all boxes will exist forever, as long as they are represented
+        // in the database.  The data itself is in a JSON format -- to
+        // turn it into a JavaScript array simply use the JSON.parse() function,
+        // like this:
+        //
+        // let actualData = JSON.parse(data);
+        //
+        // note that the end result will be an array of objects (console.log
+        // this out so you can see it)
+
+        $.ajax({
+          type: 'GET',
+          url: 'get_boxes.php',
+          data: {},
+          success: function(data, status) {
+            let actualData = JSON.parse(data);
+            //console.log(actualData)
+
+            for (let i=0; i<actualData.length; i++) {
+              let tempDiv = document.createElement('div');
+              tempDiv.classList.add('box', actualData[i]['color']);
+              boxes.appendChild(tempDiv);
+            }
+          },
+          error: function(request, data, status) {
+            alert("Error occured!");
+          }
+        });
+
+        // Task #2 - when the button is pressed initiate
+        // an AJAX request to 'savebox.php' - send it
+        // the current value of the drop down list and it
+        // will save a record for you in the 'boxes.db'
+        // database on the server.
+        //
+        // Ensure that you've set up the file path in
+        // 'config.php' to make this work.
+        //
+        // If the server returns a successful message then
+        // you should create a new div on the page with the
+        // class of 'box' and another class of whatever color
+        // the user selected and add it to the 'boxes' div.
+
+        btn.onclick = function() {
+          var color_selected = color.value;
+
+          $.ajax({
+            type: 'POST',
+            url: 'savebox.php',
+            data: {color: color_selected},
+            success: function(data, status) {
+
+              let tempDiv = document.createElement('div');
+              tempDiv.classList.add('box', color_selected);
+              boxes.appendChild(tempDiv);
+            },
+
+            error: function(request, data, status) {
+              alert("Error occured!");
+            }
+          })
+        }
+
+      });
+    </script>
+
+  </body>
+
+</html>

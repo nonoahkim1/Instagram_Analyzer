@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Macro Assignment 2</title>
+    <meta charset="utf-8">
+    <style>
+      #container {
+        width: 1280px;
+        height: 994px;
+        margin: auto;
+        position: relative;
+        border: 2px solid blue;
+      }
+      #everything {
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        font-size: 300%;
+        color: white;
+        font-weight: bold;
+      }
+      #timeAndNumber {
+        position: absolute;
+        top: 150px;
+        left: 40px;
+        border: 1px solid black;
+        font-size: 110%;
+        padding: 10px;
+        background-color: #eee;
+        border-radius: 20px 20px 20px 20px;
+        opacity: 0.8;
+      }
+      #helmet {
+        position: absolute;
+        bottom: 300px;
+        right: 256px;
+        width: 150px;
+        height: 150px;
+        z-index: 10;
+      }
+      #legohead {
+        position: absolute;
+        bottom: 280px;
+        right: 280px;
+      }
+      #legobody {
+        position: absolute;
+        bottom: 0px;
+        right: 200px;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <div id="container">
+      <img id="background" src="images/backgrounds/night.png">
+      <div id="everything"></div>
+      <div id="timeAndNumber"></div>
+      <img id="helmet" src="images/helmets/helmet1.png">
+      <img id="legohead" src="images/heads/head1.png">
+      <img id="legobody" src="images/bodies/body1.png">
+    </div>
+
+    <script src="sketch.js"></script>
+  </body>
+</html>

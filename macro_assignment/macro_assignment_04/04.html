@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Challenge #</title>
+    <style type="text/css">
+      body {
+        font-family: sans-serif;
+      }
+
+      #container {
+        width: 500px;
+        min-height: 100px;
+        margin: auto;
+        border: 1px solid black;
+        padding: 10px;
+      }
+
+      #castSpell {
+        display: block;
+        width: 300px;
+        height: 70px;
+        font-size: 100%;
+        margin: auto;
+        margin-top: 20px;
+        border-radius: 10px;
+      }
+      #castSpell:hover {
+        background-color: #fc0;
+      }
+
+      #output {
+        text-align: center;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <h1>Challenge #4</h1>
+
+    <!-- DON'T CHANGE ANY HTML BELOW THIS LINE -->
+    <div id="container"></div>
+    <button id="castSpell">Rearrango Runes!</button>
+    <div id="output"></div>
+    <!-- DON'T CHANGE ANY HTML ABOVE THIS LINE -->
+
+
+    <script type="text/javascript">
+
+      // Professor Snape locked his Potions cabinent and he can't remember the mystical combination to unlock it!
+      // he knows that the combination is a set of 5 runes in a particular order.
+
+      // Your job is to write a FUNCTION called rearrangeRunes which will randomly re-order these runes
+      // Here's how your function should work:
+      // - the 'runes' array defines the 5 possible runes that can unlock the cabinent
+      // - each rune needs to be added to the '#container' div on the page
+      // - each rune will be an <img> tag that is 100px by 100px
+      // - your function should RANDOMLY arrange the runes
+      // - at the end of the function the '#container' div should contain 5 randomly placed runes
+
+      const container = document.getElementById("container");
+      const castSpell = document.getElementById("castSpell");
+
+      // FILL IN THE FUNCTION BELOW
+
+      function rearrangeRunes() {
+        let runes = ['images/wand1.svg', 'images/potion1.svg', 'images/potion2.svg', 'images/potion3.svg', 'images/hat1.svg'];
+
+        // shuffle the array
+        for (let i = runes.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [runes[i], runes[j]] = [runes[j], runes[i]];
+        }
+
+        //apply styles
+        for (let k = 0; k < runes.length; k++) {
+          let tempImg = document.createElement("img");
+          tempImg.src = runes[k];
+          tempImg.style.width = "100px";
+          tempImg.style.height = "100px";
+          container.appendChild(tempImg);
+        }
+      }
+
+      // run your function one time to try it out before you continue
+
+      rearrangeRunes();
+
+      // Finally, add an 'onclick' event to the button in the HTML document
+      // when clicked, this button should call the 'magic' function, which is already defined
+      // and will attempt to unlock the cabinet!
+
+      castSpell.onclick = function() {
+        magic();
+      }
+
+      // DO NOT EDIT THE JAVASCRIPT BELOW THIS LINE
+      function magic() {
+var _0x1e7c=['I2ZjMA==','IG91dCBvZiA1IGNvcnJlY3Q=','PGJyPlN1Y2Nlc3Mh','Z2V0RWxlbWVudEJ5SWQ=','Y29udGFpbmVy','b3V0cHV0','aGFzQ2hpbGROb2Rlcw==','cmVtb3ZlQ2hpbGQ=','bGFzdENoaWxk','Y2hpbGROb2Rlcw==','bGVuZ3Ro','aW5uZXJIVE1M','RXJyb3IhIFRoZXJlIGNhbiBvbmx5IGJlIGV4YWN0bHkgNCBydW5lcyE=','aW1hZ2VzL3BvdGlvbjEuc3Zn','aW1hZ2VzL3BvdGlvbjIuc3Zn','aW1hZ2VzL2hhdDEuc3Zn','c3R5bGU=','YmFja2dyb3VuZC1jb2xvcg=='];(function(_0x28e1ad,_0x4c58c1){var _0x1f3311=function(_0xbacb5c){while(--_0xbacb5c){_0x28e1ad['push'](_0x28e1ad['shift']());}};_0x1f3311(++_0x4c58c1);}(_0x1e7c,0x81));var _0x20b2=function(_0x272ab1,_0x387a51){_0x272ab1=_0x272ab1-0x0;var _0x27abdd=_0x1e7c[_0x272ab1];if(_0x20b2['initialized']===undefined){(function(){var _0x2ff23d=function(){var _0x582ba2;try{_0x582ba2=Function('return\x20(function()\x20'+'{}.constructor(\x22return\x20this\x22)(\x20)'+');')();}catch(_0x521b9c){_0x582ba2=window;}return _0x582ba2;};var _0x247adc=_0x2ff23d();var _0x3e2509='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';_0x247adc['atob']||(_0x247adc['atob']=function(_0x1b0160){var _0x9107a7=String(_0x1b0160)['replace'](/=+$/,'');for(var _0x3de41a=0x0,_0xe4677b,_0x42cbc1,_0x1952ef=0x0,_0xb6e622='';_0x42cbc1=_0x9107a7['charAt'](_0x1952ef++);~_0x42cbc1&&(_0xe4677b=_0x3de41a%0x4?_0xe4677b*0x40+_0x42cbc1:_0x42cbc1,_0x3de41a++%0x4)?_0xb6e622+=String['fromCharCode'](0xff&_0xe4677b>>(-0x2*_0x3de41a&0x6)):0x0){_0x42cbc1=_0x3e2509['indexOf'](_0x42cbc1);}return _0xb6e622;});}());_0x20b2['base64DecodeUnicode']=function(_0x11a7fc){var _0x422f31=atob(_0x11a7fc);var _0x436620=[];for(var _0x29a798=0x0,_0x35e9a1=_0x422f31['length'];_0x29a798<_0x35e9a1;_0x29a798++){_0x436620+='%'+('00'+_0x422f31['charCodeAt'](_0x29a798)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x436620);};_0x20b2['data']={};_0x20b2['initialized']=!![];}var _0x5f4492=_0x20b2['data'][_0x272ab1];if(_0x5f4492===undefined){_0x27abdd=_0x20b2['base64DecodeUnicode'](_0x27abdd);_0x20b2['data'][_0x272ab1]=_0x27abdd;}else{_0x27abdd=_0x5f4492;}return _0x27abdd;};doIt();function doIt(){var _0x16876d=document[_0x20b2('0x0')](_0x20b2('0x1'));var _0x3d7c21=document[_0x20b2('0x0')](_0x20b2('0x2'));while(_0x16876d[_0x20b2('0x3')]()){_0x16876d[_0x20b2('0x4')](_0x16876d[_0x20b2('0x5')]);}rearrangeRunes();var _0x200914=_0x16876d[_0x20b2('0x6')];if(_0x200914[_0x20b2('0x7')]!=0x5){_0x3d7c21[_0x20b2('0x8')]=_0x20b2('0x9');}else{var _0x1e487f=0x0;var _0x15c1b3=['images/wand1.svg',_0x20b2('0xa'),_0x20b2('0xb'),_0x20b2('0xc'),'images/potion3.svg'];for(var _0x51e715=0x0;_0x51e715<_0x15c1b3['length'];_0x51e715++){if(_0x200914[_0x51e715]['src']['includes'](_0x15c1b3[_0x51e715])){_0x1e487f++;_0x200914[_0x51e715][_0x20b2('0xd')][_0x20b2('0xe')]=_0x20b2('0xf');}}_0x3d7c21[_0x20b2('0x8')]=_0x1e487f+_0x20b2('0x10');if(_0x1e487f==0x5){_0x3d7c21[_0x20b2('0x8')]+=_0x20b2('0x11');_0x3d7c21[_0x20b2('0x8')]+='<br>The\x20cabinet\x20is\x20full\x20of\x20Mandrake\x20Root!';}else{setTimeout(doIt,0xa);}}}
+      }
+    </script>
+
+
+  </body>
+</html>

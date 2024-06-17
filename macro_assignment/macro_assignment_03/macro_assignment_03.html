@@ -1,0 +1,505 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Gotta Catch 'em All!</title>
+    <style>
+      #forest_container {
+        width: 800px;
+        height: 600px;
+        position: relative;
+        float: left;
+        margin-right: 10px;
+      }
+      #background {
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+      }
+      #g1 {
+        position: absolute;
+        z-index: 1;
+        left: 0px;
+        bottom: 0px;
+        opacity: 0.7;
+      }
+      #g2 {
+        position: absolute;
+        z-index: 1;
+        left: 270px;
+        bottom: 0px;
+        opacity: 0.7;
+      }
+      #g3 {
+        position: absolute;
+        z-index: 1;
+        right: 0px;
+        bottom: 0px;
+        opacity: 0.7;
+      }
+      #g4 {
+        position: absolute;
+        z-index: 0;
+        left: 0px;
+        bottom: 0px;
+      }
+      #g5 {
+        position: absolute;
+        z-index: 0;
+        left: 270px;
+        bottom: 0px;
+      }
+      #g6 {
+        position: absolute;
+        z-index: 0;
+        right: 0px;
+        bottom: 0px;
+      }
+      .grass:hover {
+        background-color: rgba(255,255,0,0.5);
+      }
+      #progress {
+        font-size: 2em;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      #gameOver {
+        font-size: 2em;
+        font-weight: bold;
+        color: red;
+        text-align: center;
+      }
+      #clearResults {
+        position: absolute;
+        top: 420px;
+        left: 818px;
+      }
+      #reset {
+        position: absolute;
+        top: 420px;
+        left: 930px;
+      }
+      #results {
+        position: absolute;
+        top: 450px;
+        left: 818px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="forest_container">
+      <img id="background" src="images/environment_forestbackground.png">
+      <img class="grass" id="g1" src="images/grass.png">
+      <img class="grass" id="g2" src="images/grass.png">
+      <img class="grass" id="g3" src="images/grass.png">
+      <img class="grass" id="g4" src="images/grass.png">
+      <img class="grass" id="g5" src="images/grass.png">
+      <img class="grass" id="g6" src="images/grass.png">
+    </div>
+
+    <h1>Gotta Catch 'em All!</h1>
+
+    <p>Your goal in this game is to earn as many Pokeballs as possible while catching a variety of Pokemon along the way.</p>
+
+    <p>To play simply click on one of the three grass clumps in the forest. Behind one of those grass clumps is a Pokemon that can be caught. Behind another grass clump are two free Pokeballs that you can use to try again, and behind the last grass clump is nothing.</p>
+
+    <p>Note that each time you pick a grass clump you will be using one of your Pokeballs, and when you run out the game will be over!</p>
+
+    <div id="progress">Your progress so far ...</div>
+    <div>Pokeballs left: <span id="pokeballs_left">5</span></div>
+
+    <div>Pokemon caught: <span id="pokemon_caught">0</span></div>
+
+    <button style="display: none;" id="play_again_button">Play Again</button>
+
+    <div id="gameOver" style="display:none">Game Over!</div>
+
+    <button id="clearResults">Clear Results</button>
+
+    <button id="reset">Reset Game</button>
+
+    <div id="results"> Results: </div>
+
+
+
+    <script>
+      // grab some references to the elements that will be updated / changed / adjusted
+      const g1 = document.getElementById('g1');
+      const g2 = document.getElementById('g2');
+      const g3 = document.getElementById('g3');
+      const g4 = document.getElementById('g4');
+      const g5 = document.getElementById('g5');
+      const g6 = document.getElementById('g6');
+      const progress = document.getElementById('progress');
+      const gameOver = document.getElementById('gameOver');
+      const pokeballs_left = document.getElementById('pokeballs_left');
+      const pokemon_caught = document.getElementById('pokemon_caught');
+      const play_again_button = document.getElementById('play_again_button');
+      let pokeballs = 5;
+      let pokemon = 0;
+      const pokemon_src = ['images/pikachu.png', 'images/bulbasaur.png', 'images/charmander.png', 'images/eevee.png', 'images/squirtle.png'];
+      const names = ['Pikachu', 'Bulbasaur', 'Charmander', 'Eevee', 'Squirtle'];
+      const results = document.getElementById('results');
+      var result = [];
+      let result_string = "";
+      const clearResults = document.getElementById('clearResults');
+      let selected = false;
+      const reset = document.getElementById('reset');
+
+      g1.onclick = function() {
+        if (selected == false) {
+          selected = true;
+          let caught;
+          // figure out what's behind this patch of grass
+          let chance = parseInt( Math.random() * 3 );
+          let chance_pokemon = parseInt( Math.random() * pokemon_src.length );
+          let chance_other = parseInt( Math.random() * 2 );
+          // chance == 0, nothing!
+          if (chance == 0) {
+            // nothing!
+            g4.src = '';
+            progress.innerHTML = "Nothing here!";
+            result.push("Nothing here!");
+
+            //select object for other grasses
+            if (chance_other == 1) {
+              g5.src = 'images/pokeballs.png';
+              g6.src = `${pokemon_src[chance_pokemon]}`;
+            }
+            else {
+              g5.src = `${pokemon_src[chance_pokemon]}`;
+              g6.src = 'images/pokeballs.png';
+            }
+          }
+          else if (chance == 1) {
+
+            if (chance_pokemon == 0) {
+              g4.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 1) {
+              g4.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 2) {
+              g4.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 3) {
+              g4.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 4) {
+              g4.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            pokemon += 1;
+            progress.innerHTML = `You caught a(n) ${caught}`;
+            result.push(`${names[chance_pokemon]} found`);
+
+            if (chance_other == 1) {
+              g5.src = 'images/pokeballs.png';
+              g6.src = "";
+            }
+            else {
+              g5.src = "";
+              g6.src = 'images/pokeballs.png';
+            }
+          }
+          else {
+            g4.src = 'images/pokeballs.png';
+            pokeballs += 2;
+            progress.innerHTML = "You found two Pokeballs!";
+            result.push("Pokeballs found");
+
+            if (chance_other == 1) {
+              g5.src = `${pokemon_src[chance_pokemon]}`;
+              g6.src = "";
+            }
+            else {
+              g5.src = "";
+              g6.src = `${pokemon_src[chance_pokemon]}`;
+            }
+          }
+
+          g1.style.opacity = 0;
+
+          pokeballs -= 1;
+          pokeballs_left.innerHTML = pokeballs;
+          pokemon_caught.innerHTML = pokemon;
+
+          result_string = "";
+          for (let i = 0; i < result.length; i++) {
+            if (i == result.length - 1) {
+              result_string += result[i];
+            }
+            else {
+              result_string += result[i] + ", ";
+            }
+          }
+          results.innerHTML = `Results: ${result_string}`;
+
+
+          if (pokeballs > 0) {
+            // show the button to play again
+            play_again_button.style.display = 'block';
+          }
+          else {
+            gameOver.style.display = "block";
+          }
+
+        }
+      }
+
+      g2.onclick = function() {
+        if (selected == false) {
+          selected = true;
+          let caught;
+          // figure out what's behind this patch of grass
+          let chance = parseInt( Math.random() * 3 );
+          let chance_pokemon = parseInt( Math.random() * pokemon_src.length );
+          let chance_other = parseInt( Math.random() * 2 );
+          // chance == 0, nothing!
+          if (chance == 0) {
+            // nothing!
+            g5.src = '';
+            progress.innerHTML = "Nothing here!";
+            result.push("Nothing here!");
+
+            //select object for other grasses
+            if (chance_other == 1) {
+              g4.src = 'images/pokeballs.png';
+              g6.src = `${pokemon_src[chance_pokemon]}`;
+            }
+            else {
+              g4.src = `${pokemon_src[chance_pokemon]}`;
+              g6.src = 'images/pokeballs.png';
+            }
+          }
+          else if (chance == 1) {
+
+            if (chance_pokemon == 0) {
+              g5.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 1) {
+              g5.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 2) {
+              g5.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 3) {
+              g5.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 4) {
+              g5.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            pokemon += 1;
+            progress.innerHTML = `You caught a(n) ${caught}`;
+            result.push(`${names[chance_pokemon]} found`);
+
+            if (chance_other == 1) {
+              g4.src = 'images/pokeballs.png';
+              g6.src = "";
+            }
+            else {
+              g4.src = "";
+              g6.src = 'images/pokeballs.png';
+            }
+          }
+          else {
+            g5.src = 'images/pokeballs.png';
+            pokeballs += 2;
+            progress.innerHTML = "You found two Pokeballs!";
+            result.push("Pokeballs found");
+
+            if (chance_other == 1) {
+              g4.src = `${pokemon_src[chance_pokemon]}`;
+              g6.src = "";
+            }
+            else {
+              g4.src = "";
+              g6.src = `${pokemon_src[chance_pokemon]}`;
+            }
+          }
+
+          g2.style.opacity = 0;
+
+          pokeballs -= 1;
+          pokeballs_left.innerHTML = pokeballs;
+          pokemon_caught.innerHTML = pokemon;
+
+          result_string = "";
+          for (let i = 0; i < result.length; i++) {
+            if (i == result.length - 1) {
+              result_string += result[i];
+            }
+            else {
+              result_string += result[i] + ", ";
+            }
+          }
+          results.innerHTML = `Results: ${result_string}`;
+
+          if (pokeballs > 0) {
+            // show the button to play again
+            play_again_button.style.display = 'block';
+          }
+          else {
+            gameOver.style.display = "block";
+          }
+        }
+      }
+
+      g3.onclick = function() {
+        if (selected == false) {
+          selected = true;
+          let caught;
+          // figure out what's behind this patch of grass
+          let chance = parseInt( Math.random() * 3 );
+          let chance_pokemon = parseInt( Math.random() * pokemon_src.length );
+          let chance_other = parseInt( Math.random() * 2 );
+          // chance == 0, nothing!
+          if (chance == 0) {
+            // nothing!
+            g6.src = '';
+            progress.innerHTML = "Nothing here!";
+            result.push("Nothing here!");
+
+            //select object for other grasses
+            if (chance_other == 1) {
+              g4.src = 'images/pokeballs.png';
+              g5.src = `${pokemon_src[chance_pokemon]}`;
+            }
+            else {
+              g4.src = `${pokemon_src[chance_pokemon]}`;
+              g5.src = 'images/pokeballs.png';
+            }
+          }
+          else if (chance == 1) {
+
+            if (chance_pokemon == 0) {
+              g6.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 1) {
+              g6.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 2) {
+              g6.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 3) {
+              g6.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            else if (chance_pokemon == 4) {
+              g6.src =`${pokemon_src[chance_pokemon]}`;
+              caught = names[chance_pokemon];
+            }
+            pokemon += 1;
+            progress.innerHTML = `You caught a(n) ${caught}`;
+            result.push(`${names[chance_pokemon]} found`);
+
+            if (chance_other == 1) {
+              g4.src = 'images/pokeballs.png';
+              g5.src = "";
+            }
+            else {
+              g4.src = "";
+              g5.src = 'images/pokeballs.png';
+            }
+          }
+          else {
+            g6.src = 'images/pokeballs.png';
+            pokeballs += 2;
+            progress.innerHTML = "You found two Pokeballs!";
+            result.push("Pokeballs found");
+
+            if (chance_other == 1) {
+              g4.src = `${pokemon_src[chance_pokemon]}`;
+              g5.src = "";
+            }
+            else {
+              g4.src = "";
+              g5.src = `${pokemon_src[chance_pokemon]}`;
+            }
+          }
+
+          g3.style.opacity = 0;
+
+          pokeballs -= 1;
+          pokeballs_left.innerHTML = pokeballs;
+          pokemon_caught.innerHTML = pokemon;
+
+          result_string = "";
+          for (let i = 0; i < result.length; i++) {
+            if (i == result.length - 1) {
+              result_string += result[i];
+            }
+            else {
+              result_string += result[i] + ", ";
+            }
+          }
+          results.innerHTML = `Results: ${result_string}`;
+
+          if (pokeballs > 0) {
+            // show the button to play again
+            play_again_button.style.display = 'block';
+          }
+          else {
+            gameOver.style.display = "block";
+          }
+        }
+      }
+
+      // make the play_again_button listen for clicks
+      play_again_button.onclick = function() {
+        g1.src = 'images/grass.png';
+        g2.src = 'images/grass.png';
+        g3.src = 'images/grass.png';
+        g4.src = 'images/grass.png';
+        g5.src = 'images/grass.png';
+        g6.src = 'images/grass.png';
+        g1.style.opacity = 0.7;
+        g2.style.opacity = 0.7;
+        g3.style.opacity = 0.7;
+        play_again_button.style.display = 'none';
+        selected = false;
+      }
+
+      clearResults.onclick = function() {
+        results.innerHTML = "Results:";
+        result = [];
+      }
+
+      reset.onclick = function() {
+        pokeballs = 5;
+        pokemon = 0;
+        results.innerHTML = "Results:";
+        progress.innerHTML = "Your progress so far ...";
+        gameOver.style.display = "none";
+        g1.src = 'images/grass.png';
+        g2.src = 'images/grass.png';
+        g3.src = 'images/grass.png';
+        g4.src = 'images/grass.png';
+        g5.src = 'images/grass.png';
+        g6.src = 'images/grass.png';
+        g1.style.opacity = 0.7;
+        g2.style.opacity = 0.7;
+        g3.style.opacity = 0.7;
+        play_again_button.style.display = 'none';
+        selected = false;
+        results.innerHTML = "Results:";
+        result = [];
+        pokeballs_left.innerHTML = pokeballs;
+        pokemon_caught.innerHTML = pokemon;
+      }
+
+    </script>
+  </body>
+</html>
