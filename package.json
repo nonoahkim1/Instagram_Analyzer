@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "name": "instagram_analyzer",
+  "description": "[Testing](https://nonoahkim1.github.io/)",
+  "version": "1.0.0",
+  "main": "script.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nonoahkim1/nonoahkim1.github.io.git"
+  },
+  "author": "Noah Kim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nonoahkim1/nonoahkim1.github.io/issues"
+  },
+  "homepage": "https://github.com/nonoahkim1/nonoahkim1.github.io#readme"
+}
