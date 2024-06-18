@@ -75,3 +75,5 @@ function displayFollowers(followers) {
         });
     });
 }
+
+document.getElementById('folderInput').addEventListener('change', analyzeFolder);
