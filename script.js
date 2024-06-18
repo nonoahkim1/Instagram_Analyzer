@@ -58,47 +58,30 @@ function displayFollowers(followers) {
     const sortOptions = document.createElement('div');
     sortOptions.classList.add('sort-options');
 
-    const sortAscBtn = document.createElement('button');
-    sortAscBtn.textContent = 'Sort by Time Ascending';
-    sortAscBtn.onclick = () => displaySortedFollowers(followers, 'timestamp', 'asc');
-    sortOptions.appendChild(sortAscBtn);
+    const sortSelect = document.createElement('select');
+    const options = [
+        { value: 'timestamp-desc', text: 'Date (Newest)' },
+        { value: 'timestamp-asc', text: 'Date (Oldest)' },
+        { value: 'value-asc', text: 'Username (A-Z)' },
+        { value: 'value-desc', text: 'Username (Z-A)' }
+    ];
 
-    const sortDescBtn = document.createElement('button');
-    sortDescBtn.textContent = 'Sort by Time Descending';
-    sortDescBtn.onclick = () => displaySortedFollowers(followers, 'timestamp', 'desc');
-    sortOptions.appendChild(sortDescBtn);
+    options.forEach(option => {
+        const opt = document.createElement('option');
+        opt.value = option.value;
+        opt.textContent = option.text;
+        sortSelect.appendChild(opt);
+    });
 
-    const sortAZBtn = document.createElement('button');
-    sortAZBtn.textContent = 'Sort by Username A-Z';
-    sortAZBtn.onclick = () => displaySortedFollowers(followers, 'value', 'asc');
-    sortOptions.appendChild(sortAZBtn);
+    sortSelect.onchange = function () {
+        const [key, order] = sortSelect.value.split('-');
+        displaySortedFollowers(followers, key, order);
+    };
 
-    const sortZABtn = document.createElement('button');
-    sortZABtn.textContent = 'Sort by Username Z-A';
-    sortZABtn.onclick = () => displaySortedFollowers(followers, 'value', 'desc');
-    sortOptions.appendChild(sortZABtn);
-
+    sortOptions.appendChild(sortSelect);
     resultsDiv.appendChild(sortOptions);
 
-    followers.forEach(followerGroup => {
-        followerGroup.string_list_data.forEach(follower => {
-            const followerDiv = document.createElement('div');
-            followerDiv.classList.add('follower');
-
-            const usernameLink = document.createElement('a');
-            usernameLink.href = follower.href;
-            usernameLink.textContent = follower.value;
-            usernameLink.target = '_blank';
-            followerDiv.appendChild(usernameLink);
-
-            const timestamp = document.createElement('div');
-            timestamp.classList.add('timestamp');
-            timestamp.textContent = convertTimestamp(follower.timestamp);
-            followerDiv.appendChild(timestamp);
-
-            resultsDiv.appendChild(followerDiv);
-        });
-    });
+    displaySortedFollowers(followers, 'timestamp', 'asc');
 }
 
 function displaySortedFollowers(followers, key, order) {
@@ -111,36 +94,9 @@ function displaySortedFollowers(followers, key, order) {
         }
     });
 
-    resultsDiv.innerHTML = '';
-
-    const heading = document.createElement('h2');
-    heading.textContent = 'Followers';
-    resultsDiv.appendChild(heading);
-
-    const sortOptions = document.createElement('div');
-    sortOptions.classList.add('sort-options');
-
-    const sortAscBtn = document.createElement('button');
-    sortAscBtn.textContent = 'Sort by Time Ascending';
-    sortAscBtn.onclick = () => displaySortedFollowers(followers, 'timestamp', 'asc');
-    sortOptions.appendChild(sortAscBtn);
-
-    const sortDescBtn = document.createElement('button');
-    sortDescBtn.textContent = 'Sort by Time Descending';
-    sortDescBtn.onclick = () => displaySortedFollowers(followers, 'timestamp', 'desc');
-    sortOptions.appendChild(sortDescBtn);
-
-    const sortAZBtn = document.createElement('button');
-    sortAZBtn.textContent = 'Sort by Username A-Z';
-    sortAZBtn.onclick = () => displaySortedFollowers(followers, 'value', 'asc');
-    sortOptions.appendChild(sortAZBtn);
-
-    const sortZABtn = document.createElement('button');
-    sortZABtn.textContent = 'Sort by Username Z-A';
-    sortZABtn.onclick = () => displaySortedFollowers(followers, 'value', 'desc');
-    sortOptions.appendChild(sortZABtn);
-
-    resultsDiv.appendChild(sortOptions);
+    // Clear previous results but keep the heading and sort options
+    resultsDiv.innerHTML = resultsDiv.innerHTML.split('<div class="sort-options">')[0];
+    resultsDiv.innerHTML += '<div class="sort-options">' + resultsDiv.querySelector('.sort-options').innerHTML + '</div>';
 
     sortedFollowers.forEach(follower => {
         const followerDiv = document.createElement('div');
