@@ -86,6 +86,8 @@ function displayFollowers(followers) {
 
 function displaySortedFollowers(followers, key, order) {
     const resultsDiv = document.getElementById('results');
+    const sortOptionsHTML = resultsDiv.querySelector('.sort-options').outerHTML;
+    
     const sortedFollowers = followers.map(fg => fg.string_list_data).flat().sort((a, b) => {
         if (order === 'asc') {
             return (a[key] > b[key]) ? 1 : -1;
@@ -94,9 +96,13 @@ function displaySortedFollowers(followers, key, order) {
         }
     });
 
-    // Clear previous results but keep the heading and sort options
-    resultsDiv.innerHTML = resultsDiv.innerHTML.split('<div class="sort-options">')[0];
-    resultsDiv.innerHTML += '<div class="sort-options">' + resultsDiv.querySelector('.sort-options').innerHTML + '</div>';
+    resultsDiv.innerHTML = ''; // Clear the previous results
+
+    const heading = document.createElement('h2');
+    heading.textContent = 'Followers';
+    resultsDiv.appendChild(heading);
+
+    resultsDiv.innerHTML += sortOptionsHTML; // Append the sort options
 
     sortedFollowers.forEach(follower => {
         const followerDiv = document.createElement('div');
