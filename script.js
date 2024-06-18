@@ -60,10 +60,10 @@ function displayFollowers(followers) {
 
     const sortSelect = document.createElement('select');
     const options = [
-        { value: 'timestamp-desc', text: 'Date (Newest)' },
-        { value: 'timestamp-asc', text: 'Date (Oldest)' },
-        { value: 'value-asc', text: 'Username (A-Z)' },
-        { value: 'value-desc', text: 'Username (Z-A)' }
+        { value: 'timestamp-asc', text: 'Sort by Time Ascending' },
+        { value: 'timestamp-desc', text: 'Sort by Time Descending' },
+        { value: 'value-asc', text: 'Sort by Username A-Z' },
+        { value: 'value-desc', text: 'Sort by Username Z-A' }
     ];
 
     options.forEach(option => {
@@ -86,8 +86,8 @@ function displayFollowers(followers) {
 
 function displaySortedFollowers(followers, key, order) {
     const resultsDiv = document.getElementById('results');
-    const sortOptionsHTML = resultsDiv.querySelector('.sort-options').outerHTML;
-    
+    const sortOptions = document.querySelector('.sort-options');
+
     const sortedFollowers = followers.map(fg => fg.string_list_data).flat().sort((a, b) => {
         if (order === 'asc') {
             return (a[key] > b[key]) ? 1 : -1;
@@ -102,7 +102,7 @@ function displaySortedFollowers(followers, key, order) {
     heading.textContent = 'Followers';
     resultsDiv.appendChild(heading);
 
-    resultsDiv.innerHTML += sortOptionsHTML; // Append the sort options
+    resultsDiv.appendChild(sortOptions); // Append the sort options
 
     sortedFollowers.forEach(follower => {
         const followerDiv = document.createElement('div');
