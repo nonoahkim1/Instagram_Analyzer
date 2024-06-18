@@ -1,77 +1,60 @@
 async function analyzeFolder() {
     const folderInput = document.getElementById('folderInput');
     const files = folderInput.files;
+    const userData = {};
 
     if (files.length === 0) {
         alert('Please select a folder.');
         return;
     }
 
-    const jsonFiles = [];
-    const htmlFiles = [];
-
     for (let file of files) {
-        if (file.name.endsWith('.json')) {
-            jsonFiles.push(file);
-        } else if (file.name.endsWith('.html')) {
-            htmlFiles.push(file);
+        if (file.name === "blocked_accounts.json") {
+            userData.blocked_accounts = JSON.parse(await file.text());
         }
+        else if (file.name === "close_friends.json") {
+            userData.close_friends = JSON.parse(await file.text());
+        }
+        else if (file.name === "follow_requests_you've_received.json") {
+            userData.received_follow_requests = JSON.parse(await file.text());
+        }
+        else if (file.name === "followers_1.json") {
+            userData.followers = JSON.parse(await file.text());
+        }
+        else if (file.name === "following_hashtags.json") {
+            userData.following_hashtags = JSON.parse(await file.text());
+        }
+        else if (file.name === "following.json") {
+            userData.following = JSON.parse(await file.text());
+        }
+        else if (file.name === "hide_story_from.json") {
+            userData.hide_story_from = JSON.parse(await file.text());
+        }
+        else if (file.name === "pending_follow_requests.json") {
+            userData.pending_follow_requests = JSON.parse(await file.text());
+        }
+        else if (file.name === "recent_follow_requests.json") {
+            userData.recent_follow_requests = JSON.parse(await file.text());
+        }
+        else if (file.name === "recently_unfollowed_accounts.json") {
+            userData.recently_unfollowed_accounts = JSON.parse(await file.text());
+        }
+        // else if (file.name === ".json") {
+        //     userData. = JSON.parse(await file.text());
+        // }
+        // else if (file.name === ".json") {
+        //     userData. = JSON.parse(await file.text());
+        // }
+        // else if (file.name === ".json") {
+        //     userData. = JSON.parse(await file.text());
+        // }
     }
 
-    const jsonResults = await analyzeJsonFiles(jsonFiles);
-    const htmlResults = await analyzeHtmlFiles(htmlFiles);
-
-    displayResults(jsonResults, htmlResults);
-}
-
-async function analyzeJsonFiles(files) {
-    const results = [];
-
-    for (let file of files) {
-        const text = await file.text();
-        const jsonData = JSON.parse(text);
-        results.push(jsonData);
+    if (Object.keys(userData).length > 0) {
+        displaySpecificFilesResult(userData);
+    } else {
+        alert('No specific files found.');
     }
-
-    return results;
 }
 
-async function analyzeHtmlFiles(files) {
-    const results = [];
 
-    for (let file of files) {
-        const text = await file.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
-        results.push(doc);
-    }
-
-    return results;
-}
-
-function displayResults(jsonResults, htmlResults) {
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = '';
-
-    // Display JSON results
-    const jsonHeading = document.createElement('h2');
-    jsonHeading.textContent = 'JSON File Analysis';
-    resultsDiv.appendChild(jsonHeading);
-
-    jsonResults.forEach((result, index) => {
-        const pre = document.createElement('pre');
-        pre.textContent = `File ${index + 1}:\n${JSON.stringify(result, null, 2)}`;
-        resultsDiv.appendChild(pre);
-    });
-
-    // Display HTML results
-    const htmlHeading = document.createElement('h2');
-    htmlHeading.textContent = 'HTML File Analysis';
-    resultsDiv.appendChild(htmlHeading);
-
-    htmlResults.forEach((doc, index) => {
-        const div = document.createElement('div');
-        div.innerHTML = `<h3>File ${index + 1}:</h3>${doc.body.innerHTML}`;
-        resultsDiv.appendChild(div);
-    });
-}
