@@ -47,7 +47,7 @@ function convertTimestamp(timestamp) {
     });
 }
 
-function displayFollowers(followers) {
+function displayFollowers(followers, sortOption = 'ascDate') {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
@@ -55,32 +55,22 @@ function displayFollowers(followers) {
     heading.textContent = 'Followers';
     resultsDiv.appendChild(heading);
 
-    const sortOptions = document.createElement('div');
-    sortOptions.classList.add('sort-options');
+    const sortDropdown = document.createElement('select');
+    sortDropdown.id = 'sortOptions';
+    sortDropdown.innerHTML = `
+        <option value="ascDate">Ascending by Date</option>
+        <option value="descDate">Descending by Date</option>
+        <option value="ascName">Alphabetical A-Z</option>
+        <option value="descName">Alphabetical Z-A</option>
+    `;
+    sortDropdown.onchange = function() {
+        const selectedOption = sortDropdown.value;
+        displayFollowers(followers, selectedOption);
+    };
+    resultsDiv.appendChild(sortDropdown);
 
-    const sortAscBtn = document.createElement('button');
-    sortAscBtn.textContent = 'Sort by Time Ascending';
-    sortAscBtn.onclick = () => displaySortedFollowers(followers, 'timestamp', 'asc');
-    sortOptions.appendChild(sortAscBtn);
-
-    const sortDescBtn = document.createElement('button');
-    sortDescBtn.textContent = 'Sort by Time Descending';
-    sortDescBtn.onclick = () => displaySortedFollowers(followers, 'timestamp', 'desc');
-    sortOptions.appendChild(sortDescBtn);
-
-    const sortAZBtn = document.createElement('button');
-    sortAZBtn.textContent = 'Sort by Username A-Z';
-    sortAZBtn.onclick = () => displaySortedFollowers(followers, 'value', 'asc');
-    sortOptions.appendChild(sortAZBtn);
-
-    const sortZABtn = document.createElement('button');
-    sortZABtn.textContent = 'Sort by Username Z-A';
-    sortZABtn.onclick = () => displaySortedFollowers(followers, 'value', 'desc');
-    sortOptions.appendChild(sortZABtn);
-
-    resultsDiv.appendChild(sortOptions);
-
-    followers.forEach(followerGroup => {
+    const sortedFollowers = sortFollowers(followers, sortOption);
+    sortedFollowers.forEach(followerGroup => {
         followerGroup.string_list_data.forEach(follower => {
             const followerDiv = document.createElement('div');
             followerDiv.classList.add('follower');
@@ -101,64 +91,21 @@ function displayFollowers(followers) {
     });
 }
 
-function displaySortedFollowers(followers, key, order) {
-    const resultsDiv = document.getElementById('results');
-    const sortedFollowers = followers.map(fg => fg.string_list_data).flat().sort((a, b) => {
-        if (order === 'asc') {
-            return (a[key] > b[key]) ? 1 : -1;
-        } else {
-            return (a[key] < b[key]) ? 1 : -1;
-        }
-    });
+function sortFollowers(followers, sortOption) {
+    const flatFollowers = followers.flatMap(group => group.string_list_data);
 
-    resultsDiv.innerHTML = '';
-
-    const heading = document.createElement('h2');
-    heading.textContent = 'Followers';
-    resultsDiv.appendChild(heading);
-
-    const sortOptions = document.createElement('div');
-    sortOptions.classList.add('sort-options');
-
-    const sortAscBtn = document.createElement('button');
-    sortAscBtn.textContent = 'Sort by Time Ascending';
-    sortAscBtn.onclick = () => displaySortedFollowers(followers, 'timestamp', 'asc');
-    sortOptions.appendChild(sortAscBtn);
-
-    const sortDescBtn = document.createElement('button');
-    sortDescBtn.textContent = 'Sort by Time Descending';
-    sortDescBtn.onclick = () => displaySortedFollowers(followers, 'timestamp', 'desc');
-    sortOptions.appendChild(sortDescBtn);
-
-    const sortAZBtn = document.createElement('button');
-    sortAZBtn.textContent = 'Sort by Username A-Z';
-    sortAZBtn.onclick = () => displaySortedFollowers(followers, 'value', 'asc');
-    sortOptions.appendChild(sortAZBtn);
-
-    const sortZABtn = document.createElement('button');
-    sortZABtn.textContent = 'Sort by Username Z-A';
-    sortZABtn.onclick = () => displaySortedFollowers(followers, 'value', 'desc');
-    sortOptions.appendChild(sortZABtn);
-
-    resultsDiv.appendChild(sortOptions);
-
-    sortedFollowers.forEach(follower => {
-        const followerDiv = document.createElement('div');
-        followerDiv.classList.add('follower');
-
-        const usernameLink = document.createElement('a');
-        usernameLink.href = follower.href;
-        usernameLink.textContent = follower.value;
-        usernameLink.target = '_blank';
-        followerDiv.appendChild(usernameLink);
-
-        const timestamp = document.createElement('div');
-        timestamp.classList.add('timestamp');
-        timestamp.textContent = convertTimestamp(follower.timestamp);
-        followerDiv.appendChild(timestamp);
-
-        resultsDiv.appendChild(followerDiv);
-    });
+    switch (sortOption) {
+        case 'ascDate':
+            return flatFollowers.sort((a, b) => a.timestamp - b.timestamp);
+        case 'descDate':
+            return flatFollowers.sort((a, b) => b.timestamp - a.timestamp);
+        case 'ascName':
+            return flatFollowers.sort((a, b) => a.value.localeCompare(b.value));
+        case 'descName':
+            return flatFollowers.sort((a, b) => b.value.localeCompare(a.value));
+        default:
+            return flatFollowers;
+    }
 }
 
 document.getElementById('folderInput').addEventListener('change', analyzeFolder);
