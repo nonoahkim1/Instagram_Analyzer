@@ -31,7 +31,7 @@ function generateLinks(followers) {
     resultsDiv.appendChild(heading);
 
     const followersLink = document.createElement('a');
-    followersLink.href = '#';
+    followersLink.href = 'followers';
     followersLink.textContent = 'Followers';
     followersLink.onclick = function () {
         displayFollowers(followers);
@@ -47,30 +47,34 @@ function convertTimestamp(timestamp) {
     });
 }
 
-function displayFollowers(followers, sortOption = 'ascDate') {
+function displayFollowers(followers) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
+    // Heading
     const heading = document.createElement('h2');
     heading.textContent = 'Followers';
     resultsDiv.appendChild(heading);
 
-    const sortDropdown = document.createElement('select');
-    sortDropdown.id = 'sortOptions';
-    sortDropdown.innerHTML = `
-        <option value="ascDate">Ascending by Date</option>
-        <option value="descDate">Descending by Date</option>
-        <option value="ascName">Alphabetical A-Z</option>
-        <option value="descName">Alphabetical Z-A</option>
-    `;
-    sortDropdown.onchange = function() {
-        const selectedOption = sortDropdown.value;
-        displayFollowers(followers, selectedOption);
+    // Sort options
+    const sortOptions = document.createElement('select');
+    sortOptions.classList.add('sort-options');
+    sortOptions.onchange = function () {
+        const selectedOption = sortOptions.value;
+        displaySortedFollowers(followers, selectedOption);
     };
-    resultsDiv.appendChild(sortDropdown);
 
-    const sortedFollowers = sortFollowers(followers, sortOption);
-    sortedFollowers.forEach(followerGroup => {
+    sortOptions.innerHTML = `
+        <option value="timestamp-asc">Sort by Time Ascending</option>
+        <option value="timestamp-desc">Sort by Time Descending</option>
+        <option value="value-asc">Sort by Username A-Z</option>
+        <option value="value-desc">Sort by Username Z-A</option>
+    `;
+
+    resultsDiv.appendChild(sortOptions);
+
+    // Display followers
+    followers.forEach(followerGroup => {
         followerGroup.string_list_data.forEach(follower => {
             const followerDiv = document.createElement('div');
             followerDiv.classList.add('follower');
@@ -91,21 +95,59 @@ function displayFollowers(followers, sortOption = 'ascDate') {
     });
 }
 
-function sortFollowers(followers, sortOption) {
-    const flatFollowers = followers.flatMap(group => group.string_list_data);
 
-    switch (sortOption) {
-        case 'ascDate':
-            return flatFollowers.sort((a, b) => a.timestamp - b.timestamp);
-        case 'descDate':
-            return flatFollowers.sort((a, b) => b.timestamp - a.timestamp);
-        case 'ascName':
-            return flatFollowers.sort((a, b) => a.value.localeCompare(b.value));
-        case 'descName':
-            return flatFollowers.sort((a, b) => b.value.localeCompare(a.value));
-        default:
-            return flatFollowers;
-    }
+function displaySortedFollowers(followers, sortOption) {
+    const resultsDiv = document.getElementById('results');
+    const [key, order] = sortOption.split('-');
+    const sortedFollowers = followers.map(fg => fg.string_list_data).flat().sort((a, b) => {
+        if (order === 'asc') {
+            return (a[key] > b[key]) ? 1 : -1;
+        } else {
+            return (a[key] < b[key]) ? 1 : -1;
+        }
+    });
+
+    resultsDiv.innerHTML = '';
+
+    const heading = document.createElement('h2');
+    heading.textContent = 'Followers';
+    resultsDiv.appendChild(heading);
+
+    const sortOptions = document.createElement('select');
+    sortOptions.classList.add('sort-options');
+    sortOptions.onchange = function () {
+        const selectedOption = sortOptions.value;
+        displaySortedFollowers(followers, selectedOption);
+    };
+
+    sortOptions.innerHTML = `
+        <option value="timestamp-asc">Sort by Time Ascending</option>
+        <option value="timestamp-desc">Sort by Time Descending</option>
+        <option value="value-asc">Sort by Username A-Z</option>
+        <option value="value-desc">Sort by Username Z-A</option>
+    `;
+
+    sortOptions.value = sortOption; // Preserve selected option
+    resultsDiv.appendChild(sortOptions);
+
+    sortedFollowers.forEach(follower => {
+        const followerDiv = document.createElement('div');
+        followerDiv.classList.add('follower');
+
+        const usernameLink = document.createElement('a');
+        usernameLink.href = follower.href;
+        usernameLink.textContent = follower.value;
+        usernameLink.target = '_blank';
+        followerDiv.appendChild(usernameLink);
+
+        const timestamp = document.createElement('div');
+        timestamp.classList.add('timestamp');
+        timestamp.textContent = convertTimestamp(follower.timestamp);
+        followerDiv.appendChild(timestamp);
+
+        resultsDiv.appendChild(followerDiv);
+    });
 }
+
 
 document.getElementById('folderInput').addEventListener('change', analyzeFolder);
