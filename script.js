@@ -18,6 +18,10 @@ async function analyzeFolder() {
     if (userData.followers) {
         // Store followers data in local storage
         localStorage.setItem('followersData', JSON.stringify(userData.followers));
+
+        // Unhide links
+        const followersLink = document.getElementsByClassName('links');
+        followersLink.style.display = 'block';
     } else {
         alert('No specific files found.');
     }

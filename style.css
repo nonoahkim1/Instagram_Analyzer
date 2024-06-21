@@ -44,3 +44,7 @@ a:hover {
     padding: 5px;
     font-size: 16px;
 }
+
+.links {
+    display: none;
+}
