@@ -1,1 +1,1 @@
-Or, to open the link in a new tab, click [here](https://nonoahkim1.github.io/).
+https://nonoahkim1.github.io/
