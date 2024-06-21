@@ -1,1 +1,1 @@
-<a href="https://nonoahkim1.github.io/" target="_blank">Instagram Analyzer</a>
+Or, to open the link in a new tab, click [here](https://nonoahkim1.github.io/).
