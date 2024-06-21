@@ -9,20 +9,22 @@
 <body>
     <a href="../index.html">Home</a>
     <h1>Followers</h1>
-    <div id="sort-options-container">
-        <label for="sortOptions">Sort by: </label>
-        <select id="sortOptions" class="sort-options">
-            <option value="timestamp-desc">Newest</option>
-            <option value="timestamp-asc">Oldest</option>
-            <option value="value-asc">Alphabetical A-Z</option>
-            <option value="value-desc">Alphabetical Z-A</option>
-        </select>
-    </div>
-    <div id="year-options-container">
-        <label for="yearOptions">Filter by Year: </label>
-        <select id="yearOptions" class="year-options">
-            <!-- Options will be generated dynamically -->
-        </select>
+    <div id="filters-container">
+        <div id="sort-options-container">
+            <label for="sortOptions">Sort: </label>
+            <select id="sortOptions" class="options">
+                <option value="timestamp-desc">Newest</option>
+                <option value="timestamp-asc">Oldest</option>
+                <option value="value-asc">Numeric-Alpha(Asc)</option>
+                <option value="value-desc">Numeric-Alpha(Desc)</option>
+            </select>
+        </div>
+        <div id="year-options-container">
+            <label for="yearOptions">Year: </label>
+            <select id="yearOptions" class="options">
+                <!-- Options will be generated dynamically -->
+            </select>
+        </div>
     </div>
     <div id="results"></div>
     
