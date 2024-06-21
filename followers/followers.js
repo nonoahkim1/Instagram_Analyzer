@@ -147,6 +147,14 @@ function updateFollowerCount(count) {
     followerCountDiv.innerHTML = `Number of followers: ${count}`;
 }
 
+function openAnalysis() {
+    const analysisWindow = window.open('followers/analysis.html', 'Analysis', 'width=800,height=600');
+    analysisWindow.onload = function () {
+        const followersData = JSON.parse(localStorage.getItem('followersData'));
+        analysisWindow.renderAnalysis(followersData);
+    };
+}
+
 // Retrieve followers data from local storage and display
 const followers = JSON.parse(localStorage.getItem('followersData'));
 if (followers) {
