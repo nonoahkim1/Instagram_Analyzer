@@ -60,10 +60,6 @@ function displayFollowers(followers) {
     const sortOptions = document.createElement('select');
     sortOptions.classList.add('sort-options');
     
-    // Append the text node to the selected element
-    let textNode = document.createTextNode('Sort');
-    sortOptions.appendChild(textNode);
-
     sortOptions.onchange = function () {
         const selectedOption = sortOptions.value;
         displaySortedFollowers(followers, selectedOption);
@@ -103,12 +99,25 @@ function displayFollowers(followers) {
 
 function displaySortedFollowers(followers, sortOption) {
     const resultsDiv = document.getElementById('results');
+
+    // Split the sort option into key and order
     const [key, order] = sortOption.split('-');
-    const sortedFollowers = followers.map(fg => fg.string_list_data).flat().sort((a, b) => {
+
+    // Flatten the followers array and sort based on the key and order
+    const flatFollowers = followers.map(fg => fg.string_list_data).flat();
+    const sortedFollowers = flatFollowers.sort((a, b) => {
         if (order === 'asc') {
-            return (a[key] > b[key]) ? 1 : -1;
+            if (a[key] > b[key]) {
+                return 1;
+            } else {
+                return -1;
+            }
         } else {
-            return (a[key] < b[key]) ? 1 : -1;
+            if (a[key] < b[key]) {
+                return 1;
+            } else {
+                return -1;
+            }
         }
     });
 
@@ -153,6 +162,7 @@ function displaySortedFollowers(followers, sortOption) {
         resultsDiv.appendChild(followerDiv);
     });
 }
+
 
 
 document.getElementById('folderInput').addEventListener('change', analyzeFolder);
