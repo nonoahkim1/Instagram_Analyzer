@@ -20,8 +20,10 @@ async function analyzeFolder() {
         localStorage.setItem('followersData', JSON.stringify(userData.followers));
 
         // Unhide links
-        const followersLink = document.getElementsByClassName('links');
-        followersLink.style.display = 'block';
+        const links = document.getElementsByClassName('links');
+        for (let link of links) {
+            link.style.display = 'block';
+        }
     } else {
         alert('No specific files found.');
     }
