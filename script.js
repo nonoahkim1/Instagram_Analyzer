@@ -103,26 +103,15 @@ function displayFollowers(followers) {
 
 function displaySortedFollowers(followers, sortOption) {
     const resultsDiv = document.getElementById('results');
-
-    // Split the sort option into key and order
     const [key, order] = sortOption.split('-');
-
-    const sortedFollowers = flatFollowers.sort((a, b) => {
+    const sortedFollowers = followers.map(fg => fg.string_list_data).flat().sort((a, b) => {
         if (order === 'asc') {
-            if (a[key] > b[key]) {
-                return 1;
-            } else {
-                return -1;
-            }
+            return (a[key] > b[key]) ? 1 : -1;
         } else {
-            if (a[key] < b[key]) {
-                return 1;
-            } else {
-                return -1;
-            }
+            return (a[key] < b[key]) ? 1 : -1;
         }
     });
-    
+
     resultsDiv.innerHTML = '';
 
     const heading = document.createElement('h2');
