@@ -2,9 +2,10 @@ function renderAnalysis(followers) {
     const followersByYear = getFollowersByYear(followers);
     const followersByMonth = getFollowersByMonth(followers);
 
-    renderAccumulatingChart(followersByYear);
-    renderYearlyChart(followersByYear);
-    renderMonthlyChart(followersByMonth);
+    renderAccumulatingGraph(followersByYear);
+    renderYearlyGraph(followersByYear);
+    renderMonthlyGraph(followersByMonth);
+    renderFollowersTable(followersByYear, followersByMonth);
 }
 
 function getFollowersByYear(followers) {
@@ -37,8 +38,8 @@ function getFollowersByMonth(followers) {
     return followersByMonth;
 }
 
-function renderAccumulatingChart(followersByYear) {
-    const ctx = document.getElementById('accumulatingChart').getContext('2d');
+function renderAccumulatingGraph(followersByYear) {
+    const ctx = document.getElementById('accumulatingGraph').getContext('2d');
     const labels = Object.keys(followersByYear).sort((a, b) => a - b);
     const data = labels.map((year, index) => {
         return labels.slice(0, index + 1).reduce((sum, label) => sum + followersByYear[label], 0);
@@ -66,8 +67,8 @@ function renderAccumulatingChart(followersByYear) {
     });
 }
 
-function renderYearlyChart(followersByYear) {
-    const ctx = document.getElementById('yearlyChart').getContext('2d');
+function renderYearlyGraph(followersByYear) {
+    const ctx = document.getElementById('yearlyGraph').getContext('2d');
     const labels = Object.keys(followersByYear).sort((a, b) => a - b);
     const data = labels.map(year => followersByYear[year]);
 
@@ -93,8 +94,8 @@ function renderYearlyChart(followersByYear) {
     });
 }
 
-function renderMonthlyChart(followersByMonth) {
-    const ctx = document.getElementById('monthlyChart').getContext('2d');
+function renderMonthlyGraph(followersByMonth) {
+    const ctx = document.getElementById('monthlyGraph').getContext('2d');
     const labels = Object.keys(followersByMonth).sort();
     const data = labels.map(month => followersByMonth[month]);
 
@@ -118,4 +119,25 @@ function renderMonthlyChart(followersByMonth) {
             }
         }
     });
+}
+
+function renderFollowersTable(followersByYear, followersByMonth) {
+    const tableDiv = document.getElementById('followersTable');
+
+    let tableHTML = '<h2>Followers Gained</h2>';
+    tableHTML += '<h3>By Year</h3>';
+    tableHTML += '<table><tr><th>Year</th><th>Followers</th></tr>';
+    Object.keys(followersByYear).sort((a, b) => a - b).forEach(year => {
+        tableHTML += `<tr><td>${year}</td><td>${followersByYear[year]}</td></tr>`;
+    });
+    tableHTML += '</table>';
+
+    tableHTML += '<h3>By Month</h3>';
+    tableHTML += '<table><tr><th>Month</th><th>Followers</th></tr>';
+    Object.keys(followersByMonth).sort().forEach(month => {
+        tableHTML += `<tr><td>${month}</td><td>${followersByMonth[month]}</td></tr>`;
+    });
+    tableHTML += '</table>';
+
+    tableDiv.innerHTML = tableHTML;
 }
