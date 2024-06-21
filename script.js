@@ -24,7 +24,7 @@ async function analyzeFolder() {
         linksDiv.innerHTML = '';
 
         const followersLink = document.createElement('a');
-        followersLink.href = 'followers.html';
+        followersLink.href = 'followers/followers.html';
         followersLink.textContent = 'Go to Followers Page';
         linksDiv.appendChild(followersLink);
     } else {
