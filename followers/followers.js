@@ -74,6 +74,8 @@ function displayFollowers(followers) {
             resultsDiv.appendChild(followerDiv);
         });
     });
+
+    updateFollowerCount(followers.length);
 }
 
 function displaySortedFollowers(followers, sortOption, selectedYear) {
@@ -117,6 +119,8 @@ function displaySortedFollowers(followers, sortOption, selectedYear) {
 
         resultsDiv.appendChild(followerDiv);
     });
+
+    updateFollowerCount(sortedFollowers.length);
 }
 
 function displayFollowersByYear(followers, year, sortOption) {
@@ -134,6 +138,13 @@ function displayFollowersByYear(followers, year, sortOption) {
         const selectedOption = sortOptions.value;
         displaySortedFollowers(followers, selectedOption, year);
     };
+
+    updateFollowerCount(filteredFollowers.length);
+}
+
+function updateFollowerCount(count) {
+    const followerCountDiv = document.getElementById('follower-count');
+    followerCountDiv.innerHTML = `Number of followers: ${count}`;
 }
 
 // Retrieve followers data from local storage and display
