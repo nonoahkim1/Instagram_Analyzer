@@ -64,7 +64,6 @@ function displayFollowers(followers) {
     let textNode = document.createTextNode('Sort');
     sortOptions.appendChild(textNode);
 
-
     sortOptions.onchange = function () {
         const selectedOption = sortOptions.value;
         displaySortedFollowers(followers, selectedOption);
