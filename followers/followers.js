@@ -17,6 +17,14 @@ function generateYearOptions(followers) {
     const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
 
     const yearOptions = document.getElementById('yearOptions');
+    yearOptions.innerHTML = ''; // Clear existing options
+
+    // Add 'All' option
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent = 'All';
+    yearOptions.appendChild(allOption);
+
     uniqueYears.forEach(year => {
         const option = document.createElement('option');
         option.value = year;
@@ -25,7 +33,7 @@ function generateYearOptions(followers) {
     });
 
     yearOptions.onchange = function () {
-        const selectedYear = parseInt(yearOptions.value);
+        const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
         displayFollowersByYear(followers, selectedYear);
     };
 }
@@ -39,7 +47,9 @@ function displayFollowers(followers) {
     const sortOptions = document.getElementById('sortOptions');
     sortOptions.onchange = function () {
         const selectedOption = sortOptions.value;
-        displaySortedFollowers(followers, selectedOption);
+        const yearOptions = document.getElementById('yearOptions');
+        const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
+        displaySortedFollowers(followers, selectedOption, selectedYear);
     };
 
     // Display followers
@@ -64,11 +74,17 @@ function displayFollowers(followers) {
     });
 }
 
-function displaySortedFollowers(followers, sortOption) {
+function displaySortedFollowers(followers, sortOption, selectedYear) {
     const resultsDiv = document.getElementById('results');
 
     const [key, order] = sortOption.split('-');
-    const flatFollowers = followers.map(fg => fg.string_list_data).flat();
+    let flatFollowers = followers.map(fg => fg.string_list_data).flat();
+    
+    // Filter followers by the selected year if applicable
+    if (selectedYear !== null) {
+        flatFollowers = flatFollowers.filter(follower => getYearFromTimestamp(follower.timestamp) === selectedYear);
+    }
+
     const sortedFollowers = flatFollowers.sort((a, b) => {
         if (order === 'asc') {
             return (a[key] > b[key]) ? 1 : -1;
@@ -107,7 +123,7 @@ function displayFollowersByYear(followers, year) {
 
     followers.forEach(followerGroup => {
         followerGroup.string_list_data.forEach(follower => {
-            if (getYearFromTimestamp(follower.timestamp) === year) {
+            if (year === null || getYearFromTimestamp(follower.timestamp) === year) {
                 const followerDiv = document.createElement('div');
                 followerDiv.classList.add('follower');
 
@@ -126,6 +142,12 @@ function displayFollowersByYear(followers, year) {
             }
         });
     });
+
+    const sortOptions = document.getElementById('sortOptions');
+    sortOptions.onchange = function () {
+        const selectedOption = sortOptions.value;
+        displaySortedFollowers(followers, selectedOption, year);
+    };
 }
 
 // Retrieve followers data from local storage and display
