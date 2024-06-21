@@ -70,8 +70,8 @@ function displayFollowers(followers) {
     };
 
     sortOptions.innerHTML = `
-        <option value="timestamp-asc">Oldest</option>
-        <option value="timestamp-desc">Newest</option>
+        <option value="timestamp-asc">Newest</option>
+        <option value="timestamp-desc">Oldest</option>
         <option value="value-asc">A-Z</option>
         <option value="value-desc">Z-A</option>
     `;
@@ -126,10 +126,10 @@ function displaySortedFollowers(followers, sortOption) {
     };
 
     sortOptions.innerHTML = `
-        <option value="timestamp-asc">Sort by Time Ascending</option>
-        <option value="timestamp-desc">Sort by Time Descending</option>
-        <option value="value-asc">Sort by Username A-Z</option>
-        <option value="value-desc">Sort by Username Z-A</option>
+        <option value="timestamp-asc">Newest</option>
+        <option value="timestamp-desc">Oldest</option>
+        <option value="value-asc">A-Z</option>
+        <option value="value-desc">Z-A</option>
     `;
 
     sortOptions.value = sortOption; // Preserve selected option
