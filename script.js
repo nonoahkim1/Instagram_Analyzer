@@ -68,8 +68,8 @@ function displayFollowers(followers) {
     sortOptions.innerHTML = `
         <option value="timestamp-desc">Newest</option>
         <option value="timestamp-asc">Oldest</option>
-        <option value="value-asc">A-Z</option>
-        <option value="value-desc">Z-A</option>
+        <option value="value-asc">Alphabetical(0-9, _, A-Z)</option>
+        <option value="value-desc">Alphabetical(Z-A, _, 9-0)</option>
     `;
 
     resultsDiv.appendChild(sortOptions);
@@ -137,8 +137,8 @@ function displaySortedFollowers(followers, sortOption) {
     sortOptions.innerHTML = `
         <option value="timestamp-desc">Newest</option>
         <option value="timestamp-asc">Oldest</option>
-        <option value="value-asc">A-Z</option>
-        <option value="value-desc">Z-A</option>
+        <option value="value-asc">Alphabetical(0-9, _, A-Z)</option>
+        <option value="value-desc">Alphabetical(Z-A, _, 9-0)</option>
     `;
 
     sortOptions.value = sortOption; // Preserve selected option
