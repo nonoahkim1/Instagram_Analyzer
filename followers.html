@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Followers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Followers</h1>
+    <div id="sort-options-container">
+        <label for="sortOptions">Sort by: </label>
+        <select id="sortOptions" class="sort-options">
+            <option value="timestamp-desc">Newest</option>
+            <option value="timestamp-asc">Oldest</option>
+            <option value="value-asc">Alphabetical A-Z</option>
+            <option value="value-desc">Alphabetical Z-A</option>
+        </select>
+    </div>
+    <div id="results"></div>
+    <script src="followers.js"></script>
+</body>
+</html>

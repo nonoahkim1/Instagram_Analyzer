@@ -137,8 +137,8 @@ function displaySortedFollowers(followers, sortOption) {
     sortOptions.innerHTML = `
         <option value="timestamp-desc">Newest</option>
         <option value="timestamp-asc">Oldest</option>
-        <option value="value-asc">0-9, _, a-z</option>
-        <option value="value-desc">z-a, _, 9-0</option>
+        <option value="value-asc">Numeric-Alpha(Asc.)</option>
+        <option value="value-desc">Numeric-Alpha(Desc.)</option>
     `;
 
     sortOptions.value = sortOption; // Preserve selected option
