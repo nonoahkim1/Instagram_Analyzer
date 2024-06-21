@@ -148,7 +148,7 @@ function updateFollowerCount(count) {
 }
 
 function openAnalysis() {
-    const analysisWindow = window.open('followers/analysis.html', 'Analysis', 'width=800,height=600');
+    const analysisWindow = window.open('analysis.html', 'Analysis', 'width=800,height=600');
     analysisWindow.onload = function () {
         const followersData = JSON.parse(localStorage.getItem('followersData'));
         analysisWindow.renderAnalysis(followersData);
