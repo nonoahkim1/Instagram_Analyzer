@@ -31,7 +31,7 @@ function generateLinks(followers) {
     resultsDiv.appendChild(heading);
 
     const followersLink = document.createElement('a');
-    followersLink.href = '#';
+    followersLink.href = 'followers';
     followersLink.textContent = 'Followers';
     followersLink.onclick = function () {
         displayFollowers(followers);
