@@ -59,6 +59,12 @@ function displayFollowers(followers) {
     // Sort options
     const sortOptions = document.createElement('select');
     sortOptions.classList.add('sort-options');
+    
+    // Append the text node to the selected element
+    let textNode = document.createTextNode('Sort');
+    sortOptions.appendChild(textNode);
+
+
     sortOptions.onchange = function () {
         const selectedOption = sortOptions.value;
         displaySortedFollowers(followers, selectedOption);
