@@ -18,8 +18,15 @@ async function analyzeFolder() {
     if (userData.followers) {
         // Store followers data in local storage
         localStorage.setItem('followersData', JSON.stringify(userData.followers));
-        // Navigate to followers page
-        window.location.href = 'followers.html';
+        
+        // Generate link to followers page
+        const linksDiv = document.getElementById('link_followers');
+        linksDiv.innerHTML = '';
+
+        const followersLink = document.createElement('a');
+        followersLink.href = 'followers.html';
+        followersLink.textContent = 'Go to Followers Page';
+        linksDiv.appendChild(followersLink);
     } else {
         alert('No specific files found.');
     }
