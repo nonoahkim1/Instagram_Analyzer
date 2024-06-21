@@ -34,7 +34,9 @@ function generateYearOptions(followers) {
 
     yearOptions.onchange = function () {
         const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
-        displayFollowersByYear(followers, selectedYear);
+        const sortOptions = document.getElementById('sortOptions');
+        const selectedOption = sortOptions.value;
+        displayFollowersByYear(followers, selectedYear, selectedOption);
     };
 }
 
@@ -117,31 +119,15 @@ function displaySortedFollowers(followers, sortOption, selectedYear) {
     });
 }
 
-function displayFollowersByYear(followers, year) {
+function displayFollowersByYear(followers, year, sortOption) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
-    followers.forEach(followerGroup => {
-        followerGroup.string_list_data.forEach(follower => {
-            if (year === null || getYearFromTimestamp(follower.timestamp) === year) {
-                const followerDiv = document.createElement('div');
-                followerDiv.classList.add('follower');
-
-                const usernameLink = document.createElement('a');
-                usernameLink.href = follower.href;
-                usernameLink.textContent = follower.value;
-                usernameLink.target = '_blank';
-                followerDiv.appendChild(usernameLink);
-
-                const timestamp = document.createElement('div');
-                timestamp.classList.add('timestamp');
-                timestamp.textContent = convertTimestamp(follower.timestamp);
-                followerDiv.appendChild(timestamp);
-
-                resultsDiv.appendChild(followerDiv);
-            }
-        });
+    const filteredFollowers = followers.map(fg => fg.string_list_data).flat().filter(follower => {
+        return year === null || getYearFromTimestamp(follower.timestamp) === year;
     });
+
+    displaySortedFollowers([{string_list_data: filteredFollowers}], sortOption, year);
 
     const sortOptions = document.getElementById('sortOptions');
     sortOptions.onchange = function () {
