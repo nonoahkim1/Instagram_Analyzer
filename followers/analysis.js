@@ -148,35 +148,18 @@ function renderFollowersTable(followersByMonth) {
             const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
             const count = followersByMonth[monthKey] || 0;
             monthCell.textContent = count;
+            if (count === 0) {
+                monthCell.classList.add('zero');
+            }
             total += count;
             row.appendChild(monthCell);
         }
 
         const totalCell = document.createElement('td');
         totalCell.textContent = total;
+        totalCell.classList.add('total');
         row.appendChild(totalCell);
 
         table.appendChild(row);
     });
-
-    // Style the table similarly to the charts
-    table.style.borderCollapse = 'collapse';
-    table.style.width = '100%';
-    table.style.marginTop = '20px';
-    table.style.border = '1px solid #ddd';
-    table.style.fontSize = '16px';
-
-    const ths = table.getElementsByTagName('th');
-    for (let th of ths) {
-        th.style.border = '1px solid #ddd';
-        th.style.padding = '8px';
-        th.style.backgroundColor = 'rgba(54, 162, 235, 0.2)';
-        th.style.color = 'black';
-    }
-
-    const tds = table.getElementsByTagName('td');
-    for (let td of tds) {
-        td.style.border = '1px solid #ddd';
-        td.style.padding = '8px';
-    }
 }
