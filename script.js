@@ -1,3 +1,4 @@
+// script.js
 async function analyzeFolder() {
     const folderInput = document.getElementById('folderInput');
     const files = folderInput.files;
