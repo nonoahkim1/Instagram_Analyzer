@@ -5,7 +5,7 @@ function renderAnalysis(followers) {
     renderAccumulatingGraph(followersByYear);
     renderYearlyGraph(followersByYear);
     renderMonthlyGraph(followersByMonth);
-    renderFollowersTable(followersByYear, followersByMonth);
+    renderFollowersTable(followersByMonth);
 }
 
 function getFollowersByYear(followers) {
@@ -121,23 +121,62 @@ function renderMonthlyGraph(followersByMonth) {
     });
 }
 
-function renderFollowersTable(followersByYear, followersByMonth) {
-    const tableDiv = document.getElementById('followersTable');
+function renderFollowersTable(followersByMonth) {
+    const table = document.getElementById('followersTable');
+    table.innerHTML = '';
 
-    let tableHTML = '<h2>Followers Gained</h2>';
-    tableHTML += '<h3>By Year</h3>';
-    tableHTML += '<table><tr><th>Year</th><th>Followers</th></tr>';
-    Object.keys(followersByYear).sort((a, b) => a - b).forEach(year => {
-        tableHTML += `<tr><td>${year}</td><td>${followersByYear[year]}</td></tr>`;
+    const years = [...new Set(Object.keys(followersByMonth).map(month => month.slice(0, 4)))].sort((a, b) => a - b);
+    const headerRow = document.createElement('tr');
+    const monthNames = ['Year', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Total'];
+    
+    monthNames.forEach(month => {
+        const th = document.createElement('th');
+        th.textContent = month;
+        headerRow.appendChild(th);
     });
-    tableHTML += '</table>';
+    table.appendChild(headerRow);
 
-    tableHTML += '<h3>By Month</h3>';
-    tableHTML += '<table><tr><th>Month</th><th>Followers</th></tr>';
-    Object.keys(followersByMonth).sort().forEach(month => {
-        tableHTML += `<tr><td>${month}</td><td>${followersByMonth[month]}</td></tr>`;
+    years.forEach(year => {
+        const row = document.createElement('tr');
+        let total = 0;
+        const yearCell = document.createElement('td');
+        yearCell.textContent = year;
+        row.appendChild(yearCell);
+
+        for (let month = 0; month < 12; month++) {
+            const monthCell = document.createElement('td');
+            const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+            const count = followersByMonth[monthKey] || 0;
+            monthCell.textContent = count;
+            total += count;
+            row.appendChild(monthCell);
+        }
+
+        const totalCell = document.createElement('td');
+        totalCell.textContent = total;
+        row.appendChild(totalCell);
+
+        table.appendChild(row);
     });
-    tableHTML += '</table>';
 
-    tableDiv.innerHTML = tableHTML;
+    // Style the table similarly to the charts
+    table.style.borderCollapse = 'collapse';
+    table.style.width = '100%';
+    table.style.marginTop = '20px';
+    table.style.border = '1px solid #ddd';
+    table.style.fontSize = '16px';
+
+    const ths = table.getElementsByTagName('th');
+    for (let th of ths) {
+        th.style.border = '1px solid #ddd';
+        th.style.padding = '8px';
+        th.style.backgroundColor = 'rgba(54, 162, 235, 0.2)';
+        th.style.color = 'black';
+    }
+
+    const tds = table.getElementsByTagName('td');
+    for (let td of tds) {
+        td.style.border = '1px solid #ddd';
+        td.style.padding = '8px';
+    }
 }
