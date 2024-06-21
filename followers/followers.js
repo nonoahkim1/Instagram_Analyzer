@@ -14,7 +14,7 @@ function getYearFromTimestamp(timestamp) {
 function generateYearOptions(followers) {
     const flatFollowers = followers.map(fg => fg.string_list_data).flat();
     const years = flatFollowers.map(follower => getYearFromTimestamp(follower.timestamp));
-    const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
+    const uniqueYears = [...new Set(years)].sort((a, b) => b - a); // Sort in descending order
 
     const yearOptions = document.getElementById('yearOptions');
     yearOptions.innerHTML = ''; // Clear existing options
