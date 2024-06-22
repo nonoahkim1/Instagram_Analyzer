@@ -150,15 +150,17 @@ function updateFollowerCount(count) {
 function openAnalysis() {
     const analysisWindow = window.open('analysis.html', 'Analysis', 'width=800,height=600');
     analysisWindow.onload = function () {
-        const followersData = JSON.parse(localStorage.getItem('followersData'));
-        analysisWindow.renderAnalysis(followersData);
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        if (userData && userData.followers) {
+            analysisWindow.renderAnalysis(userData.followers);
+        }
     };
 }
 
-// Retrieve followers data from local storage and display
-const followers = JSON.parse(localStorage.getItem('followersData'));
-if (followers) {
-    displayFollowers(followers);
+// Retrieve user data from local storage and display followers if present
+const userData = JSON.parse(localStorage.getItem('userData'));
+if (userData && userData.followers) {
+    displayFollowers(userData.followers);
 } else {
     document.getElementById('results').innerHTML = 'No followers data found.';
 }

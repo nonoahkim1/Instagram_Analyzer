@@ -8,7 +8,7 @@ function renderAnalysis(followers) {
 
     renderAccumulatingGraph(followersByYear);
     renderYearlyGraph(followersByYear);
-    renderMonthlyGraph(followersByMonth);
+    renderMonthlyGraphs(followersByMonth);
     renderFollowersTable(followersByMonth);
 
     document.getElementById('toggleOpacity').onclick = function() {
@@ -113,30 +113,46 @@ function renderYearlyGraph(followersByYear) {
     });
 }
 
-function renderMonthlyGraph(followersByMonth) {
-    const ctx = document.getElementById('monthlyGraph').getContext('2d');
-    const labels = Object.keys(followersByMonth).sort();
-    const data = labels.map(month => followersByMonth[month]);
+function generateMonthLabels() {
+    return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+}
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Followers Gained Per Month',
-                data: data,
-                backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                borderColor: 'rgba(153, 102, 255, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+function renderMonthlyGraphs(followersByMonth) {
+    const container = document.getElementById('monthlyGraphs');
+    container.innerHTML = ''; // Clear any existing graphs
+
+    const years = [...new Set(Object.keys(followersByMonth).map(month => month.slice(0, 4)))];
+
+    years.forEach(year => {
+        const ctx = document.createElement('canvas');
+        container.appendChild(ctx);
+
+        const labels = generateMonthLabels();
+        const data = labels.map((_, monthIndex) => {
+            const monthKey = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
+            return followersByMonth[monthKey] || 0;
+        });
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Followers Gained in ${year}`,
+                    data: data,
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
+        });
     });
 }
 
@@ -221,4 +237,12 @@ function renderFollowersTable(followersByMonth) {
 
         table.appendChild(row);
     });
+}
+
+// Retrieve user data from local storage and display followers if present
+const userData = JSON.parse(localStorage.getItem('userData'));
+if (userData && userData.followers) {
+    renderAnalysis(userData.followers);
+} else {
+    document.getElementById('results').innerHTML = 'No followers data found.';
 }

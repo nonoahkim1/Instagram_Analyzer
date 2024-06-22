@@ -1,4 +1,3 @@
-// script.js
 async function analyzeFolder() {
     const folderInput = document.getElementById('folderInput');
     const files = folderInput.files;
@@ -14,16 +13,20 @@ async function analyzeFolder() {
         if (file.name === 'followers_1.json') {
             userData.followers = JSON.parse(await file.text());
         }
+        // Add other conditions for different files if needed
+        // Example:
+        // else if (file.name === 'blocked_accounts.json') {
+        //     userData.blockedAccounts = JSON.parse(await file.text());
+        // }
     }
 
-    if (userData.followers) {
-        // Store followers data in local storage
-        localStorage.setItem('followersData', JSON.stringify(userData.followers));
+    if (Object.keys(userData).length > 0) {
+        // Store the entire userData object in local storage
+        localStorage.setItem('userData', JSON.stringify(userData));
 
-        // Unhide links
-        const links = document.getElementsByClassName('links');
-        for (let link of links) {
-            link.style.display = 'block';
+        // Display the followers link if followers data is present
+        if (userData.followers) {
+            document.getElementById('followersLink').style.display = 'block';
         }
     } else {
         alert('No specific files found.');
@@ -31,3 +34,11 @@ async function analyzeFolder() {
 }
 
 document.getElementById('folderInput').addEventListener('change', analyzeFolder);
+
+// Check local storage on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData && userData.followers) {
+        document.getElementById('followersLink').style.display = 'block';
+    }
+});
