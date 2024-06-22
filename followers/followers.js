@@ -1,3 +1,5 @@
+let followersData = [];
+
 function convertTimestamp(timestamp) {
     const dtObject = new Date((timestamp - 28800) * 1000); // Convert to milliseconds
     return dtObject.toLocaleString('en-US', { 
@@ -36,11 +38,13 @@ function generateYearOptions(followers) {
         const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
         const sortOptions = document.getElementById('sortOptions');
         const selectedOption = sortOptions.value;
-        displayFollowersByYear(followers, selectedYear, selectedOption);
+        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+        displayFollowersByYear(followers, selectedYear, selectedOption, searchQuery);
     };
 }
 
 function displayFollowers(followers) {
+    followersData = followers; // Store followers data for search functionality
     generateYearOptions(followers);
 
     const resultsDiv = document.getElementById('results');
@@ -51,34 +55,24 @@ function displayFollowers(followers) {
         const selectedOption = sortOptions.value;
         const yearOptions = document.getElementById('yearOptions');
         const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
-        displaySortedFollowers(followers, selectedOption, selectedYear);
+        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+        displaySortedFollowers(followers, selectedOption, selectedYear, searchQuery);
     };
 
-    // Display followers
-    followers.forEach(followerGroup => {
-        followerGroup.string_list_data.forEach(follower => {
-            const followerDiv = document.createElement('div');
-            followerDiv.classList.add('follower');
+    const searchInput = document.getElementById('searchInput');
+    searchInput.oninput = function () {
+        const searchQuery = searchInput.value.toLowerCase();
+        const sortOptions = document.getElementById('sortOptions');
+        const selectedOption = sortOptions.value;
+        const yearOptions = document.getElementById('yearOptions');
+        const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
+        displaySortedFollowers(followers, selectedOption, selectedYear, searchQuery);
+    };
 
-            const usernameLink = document.createElement('a');
-            usernameLink.href = follower.href;
-            usernameLink.textContent = follower.value;
-            usernameLink.target = '_blank';
-            followerDiv.appendChild(usernameLink);
-
-            const timestamp = document.createElement('div');
-            timestamp.classList.add('timestamp');
-            timestamp.textContent = convertTimestamp(follower.timestamp);
-            followerDiv.appendChild(timestamp);
-
-            resultsDiv.appendChild(followerDiv);
-        });
-    });
-
-    updateFollowerCount(followers.length);
+    displaySortedFollowers(followers, 'timestamp-desc', null, '');
 }
 
-function displaySortedFollowers(followers, sortOption, selectedYear) {
+function displaySortedFollowers(followers, sortOption, selectedYear, searchQuery) {
     const resultsDiv = document.getElementById('results');
 
     const [key, order] = sortOption.split('-');
@@ -88,6 +82,9 @@ function displaySortedFollowers(followers, sortOption, selectedYear) {
     if (selectedYear !== null) {
         flatFollowers = flatFollowers.filter(follower => getYearFromTimestamp(follower.timestamp) === selectedYear);
     }
+
+    // Filter followers by the search query
+    flatFollowers = flatFollowers.filter(follower => follower.value.toLowerCase().includes(searchQuery));
 
     const sortedFollowers = flatFollowers.sort((a, b) => {
         if (order === 'asc') {
@@ -123,20 +120,21 @@ function displaySortedFollowers(followers, sortOption, selectedYear) {
     updateFollowerCount(sortedFollowers.length);
 }
 
-function displayFollowersByYear(followers, year, sortOption) {
+function displayFollowersByYear(followers, year, sortOption, searchQuery) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
     const filteredFollowers = followers.map(fg => fg.string_list_data).flat().filter(follower => {
-        return year === null || getYearFromTimestamp(follower.timestamp) === year;
+        return (year === null || getYearFromTimestamp(follower.timestamp) === year) &&
+               follower.value.toLowerCase().includes(searchQuery);
     });
 
-    displaySortedFollowers([{string_list_data: filteredFollowers}], sortOption, year);
+    displaySortedFollowers([{string_list_data: filteredFollowers}], sortOption, year, searchQuery);
 
     const sortOptions = document.getElementById('sortOptions');
     sortOptions.onchange = function () {
         const selectedOption = sortOptions.value;
-        displaySortedFollowers(followers, selectedOption, year);
+        displaySortedFollowers(followers, selectedOption, year, searchQuery);
     };
 
     updateFollowerCount(filteredFollowers.length);
