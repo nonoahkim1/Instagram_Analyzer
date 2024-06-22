@@ -15,15 +15,15 @@ canvas {
 
 button {
     margin: 10px 0;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 4px 4px;
+    font-size: 14px;
     cursor: pointer;
 }
 
 table {
     border-collapse: collapse;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 5px;
     border: 1px solid #ddd;
     font-size: 16px;
 }
