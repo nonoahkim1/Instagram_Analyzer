@@ -1,4 +1,5 @@
-let varianceEnabled = true; // State variable to track if variance is enabled
+let opacityEnabled = false; // State variable to track if opacity variance is enabled
+let fontSizeEnabled = false; // State variable to track if font size variance is enabled
 let highlightEnabled = false; // State variable to track if highlighting is enabled
 
 function renderAnalysis(followers) {
@@ -10,8 +11,13 @@ function renderAnalysis(followers) {
     renderMonthlyGraph(followersByMonth);
     renderFollowersTable(followersByMonth);
 
-    document.getElementById('toggleVariance').onclick = function() {
-        varianceEnabled = !varianceEnabled; // Toggle state
+    document.getElementById('toggleOpacity').onclick = function() {
+        opacityEnabled = !opacityEnabled; // Toggle state
+        renderFollowersTable(followersByMonth); // Re-render table
+    };
+
+    document.getElementById('toggleFontSize').onclick = function() {
+        fontSizeEnabled = !fontSizeEnabled; // Toggle state
         renderFollowersTable(followersByMonth); // Re-render table
     };
 
@@ -171,16 +177,21 @@ function renderFollowersTable(followersByMonth) {
             const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
             const count = followersByMonth[monthKey] || 0;
             monthCell.textContent = count;
-            if (varianceEnabled && minCount !== maxCount) {  // Avoid division by zero
+
+            if (opacityEnabled && minCount !== maxCount) {  // Avoid division by zero
                 const opacity = 0.3 + 0.7 * ((count - minCount) / (maxCount - minCount)); // Scale opacity between 0.3 and 1
                 monthCell.style.opacity = opacity;
+            } else {
+                monthCell.style.opacity = 1; // Default opacity
+            }
 
+            if (fontSizeEnabled && minCount !== maxCount) {  // Avoid division by zero
                 const fontSize = 12 + 8 * ((count - minCount) / (maxCount - minCount)); // Adjust this line to set font size
                 monthCell.style.fontSize = `${fontSize}px`; // Apply font size based on follower gain
             } else {
-                monthCell.style.opacity = 1;
                 monthCell.style.fontSize = '16px'; // Default font size
             }
+
             if (highlightEnabled) {
                 if (count === minCount) {
                     monthCell.style.backgroundColor = '#FF8080'; // Highlight least followers gained month
@@ -192,6 +203,7 @@ function renderFollowersTable(followersByMonth) {
             } else {
                 monthCell.style.backgroundColor = ''; // Clear background color
             }
+            
             total += count;
             row.appendChild(monthCell);
         }
