@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Followers Analysis</title>
     <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="analysis.css">
+    <link rel="stylesheet" href="analysis.css"> <!-- New CSS file -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -13,6 +13,8 @@
     <canvas id="accumulatingGraph" width="400" height="200"></canvas>
     <canvas id="yearlyGraph" width="400" height="200"></canvas>
     <canvas id="monthlyGraph" width="400" height="200"></canvas>
+    <button id="toggleVariance">Toggle Opacity and Font Size Variance</button>
+    <button id="highlightBlocks">Highlight Most and Least Followers</button>
     <table id="followersTable"></table>
     <script src="analysis.js"></script>
 </body>

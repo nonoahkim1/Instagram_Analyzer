@@ -1,3 +1,6 @@
+let varianceEnabled = true; // State variable to track if variance is enabled
+let highlightEnabled = false; // State variable to track if highlighting is enabled
+
 function renderAnalysis(followers) {
     const followersByYear = getFollowersByYear(followers);
     const followersByMonth = getFollowersByMonth(followers);
@@ -6,6 +9,16 @@ function renderAnalysis(followers) {
     renderYearlyGraph(followersByYear);
     renderMonthlyGraph(followersByMonth);
     renderFollowersTable(followersByMonth);
+
+    document.getElementById('toggleVariance').onclick = function() {
+        varianceEnabled = !varianceEnabled; // Toggle state
+        renderFollowersTable(followersByMonth); // Re-render table
+    };
+
+    document.getElementById('highlightBlocks').onclick = function() {
+        highlightEnabled = !highlightEnabled; // Toggle state
+        renderFollowersTable(followersByMonth); // Re-render table
+    };
 }
 
 function getFollowersByYear(followers) {
@@ -127,7 +140,7 @@ function renderFollowersTable(followersByMonth) {
 
     const years = [...new Set(Object.keys(followersByMonth).map(month => month.slice(0, 4)))].sort((a, b) => a - b);
     const headerRow = document.createElement('tr');
-    const monthNames = ['Year', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Total'];
+    const monthNames = ['Year', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Total', 'Accumulating'];
     
     monthNames.forEach(month => {
         const th = document.createElement('th');
@@ -136,6 +149,8 @@ function renderFollowersTable(followersByMonth) {
     });
     table.appendChild(headerRow);
 
+    let accumulatingCount = 0;
+
     years.forEach(year => {
         const row = document.createElement('tr');
         let total = 0;
@@ -143,13 +158,39 @@ function renderFollowersTable(followersByMonth) {
         yearCell.textContent = year;
         row.appendChild(yearCell);
 
+        // Get min and max followers for the year
+        const counts = Array.from({ length: 12 }, (_, month) => {
+            const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+            return followersByMonth[monthKey] || 0;
+        });
+        const minCount = Math.min(...counts);
+        const maxCount = Math.max(...counts);
+
         for (let month = 0; month < 12; month++) {
             const monthCell = document.createElement('td');
             const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
             const count = followersByMonth[monthKey] || 0;
             monthCell.textContent = count;
-            if (count === 0) {
-                monthCell.classList.add('zero');
+            if (varianceEnabled && minCount !== maxCount) {  // Avoid division by zero
+                const opacity = 0.3 + 0.7 * ((count - minCount) / (maxCount - minCount)); // Scale opacity between 0.3 and 1
+                monthCell.style.opacity = opacity;
+
+                const fontSize = 12 + 8 * ((count - minCount) / (maxCount - minCount)); // Adjust this line to set font size
+                monthCell.style.fontSize = `${fontSize}px`; // Apply font size based on follower gain
+            } else {
+                monthCell.style.opacity = 1;
+                monthCell.style.fontSize = '16px'; // Default font size
+            }
+            if (highlightEnabled) {
+                if (count === minCount) {
+                    monthCell.style.backgroundColor = '#FF8080'; // Highlight least followers gained month
+                } else if (count === maxCount) {
+                    monthCell.style.backgroundColor = '#C7F6C7'; // Highlight most followers gained month
+                } else {
+                    monthCell.style.backgroundColor = ''; // Clear background color
+                }
+            } else {
+                monthCell.style.backgroundColor = ''; // Clear background color
             }
             total += count;
             row.appendChild(monthCell);
@@ -159,6 +200,12 @@ function renderFollowersTable(followersByMonth) {
         totalCell.textContent = total;
         totalCell.classList.add('total');
         row.appendChild(totalCell);
+
+        accumulatingCount += total;
+        const accumulatingCell = document.createElement('td');
+        accumulatingCell.textContent = accumulatingCount;
+        accumulatingCell.classList.add('accumulating');
+        row.appendChild(accumulatingCell);
 
         table.appendChild(row);
     });

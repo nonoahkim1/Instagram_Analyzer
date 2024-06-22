@@ -13,6 +13,13 @@ canvas {
     margin-bottom: 20px;
 }
 
+button {
+    margin: 10px 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 table {
     border-collapse: collapse;
     width: 100%;
@@ -38,4 +45,8 @@ td.zero {
 
 td.total {
     font-weight: bold; /* Make total cells bold */
+}
+
+td.accumulating {
+    font-weight: bold; /* Make accumulating cells bold */
 }
