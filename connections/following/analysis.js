@@ -28,6 +28,13 @@ function renderAnalysis(following) {
         highlightEnabled = !highlightEnabled; // Toggle state
         renderFollowingTable(followingByMonth); // Re-render table
     };
+
+    // Display follower stats
+    const followerUsernames = JSON.parse(localStorage.getItem('userData')).followers.flatMap(fg => fg.string_list_data.map(fd => fd.value));
+    const notFollowingBackCount = following.flatMap(fg => fg.string_list_data).filter(follower => !followerUsernames.includes(follower.value)).length;
+    const totalFollowingCount = following.flatMap(fg => fg.string_list_data).length;
+
+    document.getElementById('follower-stats').innerHTML = `Total Following: ${totalFollowingCount}, Not followed Back: ${notFollowingBackCount}`;
 }
 
 function getFollowingByYear(following) {
@@ -196,7 +203,7 @@ function renderFollowingTable(followingByMonth) {
         yearCell.textContent = year;
         row.appendChild(yearCell);
 
-        // Get min and max followers for the year
+        // Get min and max following for the year
         const counts = Array.from({ length: 12 }, (_, month) => {
             const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
             return followingByMonth[monthKey] || 0;
@@ -226,9 +233,9 @@ function renderFollowingTable(followingByMonth) {
 
             if (highlightEnabled) {
                 if (count === minCount) {
-                    monthCell.classList.add('highlight-least'); // Highlight least followers gained month
+                    monthCell.classList.add('highlight-least'); // Highlight least following gained month
                 } else if (count === maxCount) {
-                    monthCell.classList.add('highlight-most'); // Highlight most followers gained month
+                    monthCell.classList.add('highlight-most'); // Highlight most following gained month
                 } else {
                     monthCell.classList.remove('highlight-least', 'highlight-most'); // Clear background color
                 }
@@ -256,12 +263,4 @@ function renderFollowingTable(followingByMonth) {
 
     // Apply table styles
     table.classList.add('styled-table');
-}
-
-// Retrieve user data from local storage and display following if present
-const userData = JSON.parse(localStorage.getItem('userData'));
-if (userData && userData.following) {
-    renderAnalysis(userData.following);
-} else {
-    document.getElementById('results').innerHTML = 'No following data found.';
 }

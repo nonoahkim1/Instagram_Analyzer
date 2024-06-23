@@ -1,4 +1,5 @@
 // connections/following/following.js
+let followersData = [];
 let followingData = [];
 
 function convertTimestamp(timestamp) {
@@ -40,7 +41,8 @@ function generateYearOptions(following) {
         const sortOptions = document.getElementById('sortOptions');
         const selectedOption = sortOptions.value;
         const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-        displayFollowingByYear(following, selectedYear, selectedOption, searchQuery);
+        const notFollowingBack = document.getElementById('notFollowingBack').checked;
+        displayFollowingByYear(following, selectedYear, selectedOption, searchQuery, notFollowingBack);
     };
 }
 
@@ -57,7 +59,8 @@ function displayFollowing(following) {
         const yearOptions = document.getElementById('yearOptions');
         const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
         const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-        displaySortedFollowing(following, selectedOption, selectedYear, searchQuery);
+        const notFollowingBack = document.getElementById('notFollowingBack').checked;
+        displaySortedFollowing(following, selectedOption, selectedYear, searchQuery, notFollowingBack);
     };
 
     const searchInput = document.getElementById('searchInput');
@@ -67,13 +70,25 @@ function displayFollowing(following) {
         const selectedOption = sortOptions.value;
         const yearOptions = document.getElementById('yearOptions');
         const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
-        displaySortedFollowing(following, selectedOption, selectedYear, searchQuery);
+        const notFollowingBack = document.getElementById('notFollowingBack').checked;
+        displaySortedFollowing(following, selectedOption, selectedYear, searchQuery, notFollowingBack);
     };
 
-    displaySortedFollowing(following, 'timestamp-desc', null, '');
+    const notFollowingBackCheckbox = document.getElementById('notFollowingBack');
+    notFollowingBackCheckbox.onchange = function () {
+        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+        const sortOptions = document.getElementById('sortOptions');
+        const selectedOption = sortOptions.value;
+        const yearOptions = document.getElementById('yearOptions');
+        const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
+        const notFollowingBack = notFollowingBackCheckbox.checked;
+        displaySortedFollowing(following, selectedOption, selectedYear, searchQuery, notFollowingBack);
+    };
+
+    displaySortedFollowing(following, 'timestamp-desc', null, '', false);
 }
 
-function displaySortedFollowing(following, sortOption, selectedYear, searchQuery) {
+function displaySortedFollowing(following, sortOption, selectedYear, searchQuery, notFollowingBack) {
     const resultsDiv = document.getElementById('results');
 
     const [key, order] = sortOption.split('-');
@@ -86,6 +101,11 @@ function displaySortedFollowing(following, sortOption, selectedYear, searchQuery
 
     // Filter following by the search query
     flatFollowing = flatFollowing.filter(follower => follower.value.toLowerCase().includes(searchQuery));
+
+    // Filter following by not following back if applicable
+    if (notFollowingBack) {
+        flatFollowing = flatFollowing.filter(follower => !followersData.some(follow => follow.value === follower.value));
+    }
 
     const sortedFollowing = flatFollowing.sort((a, b) => {
         if (order === 'asc') {
@@ -115,13 +135,18 @@ function displaySortedFollowing(following, sortOption, selectedYear, searchQuery
         timestamp.textContent = convertTimestamp(follower.timestamp);
         followerDiv.appendChild(timestamp);
 
+        // Indicate if the user is not following back
+        if (!followersData.some(follow => follow.value === follower.value)) {
+            followerDiv.classList.add('not-following-back');
+        }
+
         resultsDiv.appendChild(followerDiv);
     });
 
     updateFollowingCount(sortedFollowing.length);
 }
 
-function displayFollowingByYear(following, year, sortOption, searchQuery) {
+function displayFollowingByYear(following, year, sortOption, searchQuery, notFollowingBack) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
@@ -130,12 +155,12 @@ function displayFollowingByYear(following, year, sortOption, searchQuery) {
                follower.value.toLowerCase().includes(searchQuery);
     });
 
-    displaySortedFollowing([{string_list_data: filteredFollowing}], sortOption, year, searchQuery);
+    displaySortedFollowing([{string_list_data: filteredFollowing}], sortOption, year, searchQuery, notFollowingBack);
 
     const sortOptions = document.getElementById('sortOptions');
     sortOptions.onchange = function () {
         const selectedOption = sortOptions.value;
-        displaySortedFollowing(following, selectedOption, year, searchQuery);
+        displaySortedFollowing(following, selectedOption, year, searchQuery, notFollowingBack);
     };
 
     updateFollowingCount(filteredFollowing.length);
@@ -159,6 +184,10 @@ function openAnalysis() {
 // Retrieve user data from local storage and display following if present
 const userData = JSON.parse(localStorage.getItem('userData'));
 if (userData && userData.following) {
+    followersData = userData.followers.map(fg => fg.string_list_data).flat();
+    if (userData.following) {
+        followingData = userData.following.map(fg => fg.string_list_data).flat();
+    }
     displayFollowing(userData.following);
 } else {
     document.getElementById('results').innerHTML = 'No following data found.';
