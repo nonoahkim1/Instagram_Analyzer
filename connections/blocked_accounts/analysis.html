@@ -1,0 +1,23 @@
+<!-- connections/blocked_accounts/analysis.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blocked Accounts Analysis</title>
+    <link rel="stylesheet" href="analysis.css"> <!-- New CSS file -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Blocked Accounts Analysis</h1>
+    <div id="blocked-stats"></div> <!-- Placeholder for blocked stats -->
+    <canvas id="accumulatingGraph" width="400" height="200"></canvas>
+    <canvas id="yearlyGraph" width="400" height="200"></canvas>
+    <div id="monthlyGraphs"></div> <!-- Container for monthly graphs -->
+    <button id="toggleOpacity">Toggle Opacity</button>
+    <button id="toggleFontSize">Toggle Font Size</button>
+    <button id="highlightBlocks">Highlight Most & Least Blocked</button>
+    <table id="blockedTable"></table>
+    <script src="analysis.js"></script>
+</body>
+</html>

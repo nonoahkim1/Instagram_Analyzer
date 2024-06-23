@@ -16,6 +16,9 @@ async function analyzeFolder() {
         } else if (file.name === 'following.json') {
             const followingData = JSON.parse(await file.text());
             userData.following = followingData.relationships_following;
+        } else if (file.name === 'blocked_accounts.json') {
+            const blockedData = JSON.parse(await file.text());
+            userData.blocked = blockedData.relationships_blocked_users;
         }
     }
 
@@ -29,6 +32,9 @@ async function analyzeFolder() {
         }
         if (userData.following) {
             document.getElementById('followingLink').style.display = 'block';
+        }
+        if (userData.blocked) {
+            document.getElementById('blockedAccountsLink').style.display = 'block';
         }
     } else {
         alert('No specific files found.');
@@ -46,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (userData.following) {
             document.getElementById('followingLink').style.display = 'block';
+        }
+        if (userData.blocked) {
+            document.getElementById('blockedAccountsLink').style.display = 'block';
         }
     }
 });
