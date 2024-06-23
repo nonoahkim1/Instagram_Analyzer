@@ -1,4 +1,4 @@
-// analysis.js
+// connections/followers/analysis.js
 let opacityEnabled = false; // State variable to track if opacity variance is enabled
 let fontSizeEnabled = false; // State variable to track if font size variance is enabled
 let highlightEnabled = false; // State variable to track if highlighting is enabled
@@ -9,6 +9,7 @@ function renderAnalysis(followers) {
     const followersByYear = getFollowersByYear(followers);
     const followersByMonth = getFollowersByMonth(followers);
 
+    renderFollowerStats(followers);
     renderAccumulatingGraph(followersByYear);
     renderYearlyGraph(followersByYear);
     renderMonthlyGraphs(followersByMonth);
@@ -58,6 +59,16 @@ function getFollowersByMonth(followers) {
     });
 
     return followersByMonth;
+}
+
+function renderFollowerStats(followers) {
+    const flatFollowers = followers.flatMap(fg => fg.string_list_data);
+    const totalFollowers = flatFollowers.length;
+    const followingUsernames = JSON.parse(localStorage.getItem('userData')).following.flatMap(fg => fg.string_list_data.map(fd => fd.value));
+    const notFollowingBackCount = flatFollowers.filter(follower => !followingUsernames.includes(follower.value)).length;
+
+    const statsDiv = document.getElementById('follower-stats');
+    statsDiv.innerHTML = `Total Followers: ${totalFollowers}, Not Following Back: ${notFollowingBackCount}`;
 }
 
 function renderAccumulatingGraph(followersByYear) {
