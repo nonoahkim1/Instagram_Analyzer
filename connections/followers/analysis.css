@@ -50,3 +50,36 @@ td.total {
 td.accumulating {
     font-weight: bold; /* Make accumulating cells bold */
 }
+
+td.highlight-least {
+    background-color: #FF8080;
+}
+
+td.highlight-most {
+    background-color: #C7F6C7;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+td {
+    transition: all 0.3s ease-in-out;
+}
+
+.styled-table th,
+.styled-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.styled-table th {
+    background-color: rgba(54, 162, 235, 0.2);
+    color: black;
+}
+
+.styled-table td.total,
+.styled-table td.accumulating {
+    font-weight: bold;
+}

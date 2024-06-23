@@ -3,6 +3,8 @@ let opacityEnabled = false; // State variable to track if opacity variance is en
 let fontSizeEnabled = false; // State variable to track if font size variance is enabled
 let highlightEnabled = false; // State variable to track if highlighting is enabled
 
+let accumulatingChart, yearlyChart, monthlyCharts = [];
+
 function renderAnalysis(followers) {
     const followersByYear = getFollowersByYear(followers);
     const followersByMonth = getFollowersByMonth(followers);
@@ -29,7 +31,7 @@ function renderAnalysis(followers) {
 }
 
 function getFollowersByYear(followers) {
-    const flatFollowers = followers.map(fg => fg.string_list_data).flat();
+    const flatFollowers = followers.flatMap(fg => fg.string_list_data);
     const followersByYear = {};
 
     flatFollowers.forEach(follower => {
@@ -44,7 +46,7 @@ function getFollowersByYear(followers) {
 }
 
 function getFollowersByMonth(followers) {
-    const flatFollowers = followers.map(fg => fg.string_list_data).flat();
+    const flatFollowers = followers.flatMap(fg => fg.string_list_data);
     const followersByMonth = {};
 
     flatFollowers.forEach(follower => {
@@ -59,13 +61,17 @@ function getFollowersByMonth(followers) {
 }
 
 function renderAccumulatingGraph(followersByYear) {
+    if (accumulatingChart) {
+        accumulatingChart.destroy();
+    }
+    
     const ctx = document.getElementById('accumulatingGraph').getContext('2d');
     const labels = Object.keys(followersByYear).sort((a, b) => a - b);
     const data = labels.map((year, index) => {
         return labels.slice(0, index + 1).reduce((sum, label) => sum + followersByYear[label], 0);
     });
 
-    new Chart(ctx, {
+    accumulatingChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
@@ -88,11 +94,15 @@ function renderAccumulatingGraph(followersByYear) {
 }
 
 function renderYearlyGraph(followersByYear) {
+    if (yearlyChart) {
+        yearlyChart.destroy();
+    }
+
     const ctx = document.getElementById('yearlyGraph').getContext('2d');
     const labels = Object.keys(followersByYear).sort((a, b) => a - b);
     const data = labels.map(year => followersByYear[year]);
 
-    new Chart(ctx, {
+    yearlyChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
@@ -119,6 +129,9 @@ function generateMonthLabels() {
 }
 
 function renderMonthlyGraphs(followersByMonth) {
+    monthlyCharts.forEach(chart => chart.destroy());
+    monthlyCharts = [];
+
     const container = document.getElementById('monthlyGraphs');
     container.innerHTML = ''; // Clear any existing graphs
 
@@ -134,7 +147,7 @@ function renderMonthlyGraphs(followersByMonth) {
             return followersByMonth[monthKey] || 0;
         });
 
-        new Chart(ctx, {
+        const monthlyChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
@@ -154,6 +167,8 @@ function renderMonthlyGraphs(followersByMonth) {
                 }
             }
         });
+
+        monthlyCharts.push(monthlyChart);
     });
 }
 
@@ -211,14 +226,14 @@ function renderFollowersTable(followersByMonth) {
 
             if (highlightEnabled) {
                 if (count === minCount) {
-                    monthCell.style.backgroundColor = '#FF8080'; // Highlight least followers gained month
+                    monthCell.classList.add('highlight-least'); // Highlight least followers gained month
                 } else if (count === maxCount) {
-                    monthCell.style.backgroundColor = '#C7F6C7'; // Highlight most followers gained month
+                    monthCell.classList.add('highlight-most'); // Highlight most followers gained month
                 } else {
-                    monthCell.style.backgroundColor = ''; // Clear background color
+                    monthCell.classList.remove('highlight-least', 'highlight-most'); // Clear background color
                 }
             } else {
-                monthCell.style.backgroundColor = ''; // Clear background color
+                monthCell.classList.remove('highlight-least', 'highlight-most'); // Clear background color
             }
             
             total += count;
@@ -238,12 +253,7 @@ function renderFollowersTable(followersByMonth) {
 
         table.appendChild(row);
     });
-}
 
-// Retrieve user data from local storage and display followers if present
-const userData = JSON.parse(localStorage.getItem('userData'));
-if (userData && userData.followers) {
-    renderAnalysis(userData.followers);
-} else {
-    document.getElementById('results').innerHTML = 'No followers data found.';
+    // Apply table styles
+    table.classList.add('styled-table');
 }
