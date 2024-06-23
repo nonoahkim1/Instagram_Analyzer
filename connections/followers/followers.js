@@ -1,4 +1,4 @@
-// followers.js
+// connections/followers/followers.js
 let followersData = [];
 let followingData = [];
 

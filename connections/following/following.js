@@ -1,4 +1,4 @@
-// following.js
+// connections/following/following.js
 let followingData = [];
 
 function convertTimestamp(timestamp) {
