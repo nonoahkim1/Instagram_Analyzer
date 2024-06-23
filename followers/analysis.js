@@ -1,3 +1,4 @@
+// analysis.js
 let opacityEnabled = false; // State variable to track if opacity variance is enabled
 let fontSizeEnabled = false; // State variable to track if font size variance is enabled
 let highlightEnabled = false; // State variable to track if highlighting is enabled
