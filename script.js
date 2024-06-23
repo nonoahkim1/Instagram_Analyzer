@@ -13,20 +13,21 @@ async function analyzeFolder() {
         if (file.name === 'followers_1.json') {
             userData.followers = JSON.parse(await file.text());
         }
-        // Add other conditions for different files if needed
-        // Example:
-        // else if (file.name === 'blocked_accounts.json') {
-        //     userData.blockedAccounts = JSON.parse(await file.text());
-        // }
+        if (file.name === 'following.json') {
+            userData.following = JSON.parse(await file.text());
+        }
     }
 
     if (Object.keys(userData).length > 0) {
         // Store the entire userData object in local storage
         localStorage.setItem('userData', JSON.stringify(userData));
 
-        // Display the followers link if followers data is present
+        // Display the followers and following links if data is present
         if (userData.followers) {
             document.getElementById('followersLink').style.display = 'block';
+        }
+        if (userData.following) {
+            document.getElementById('followingLink').style.display = 'block';
         }
     } else {
         alert('No specific files found.');
@@ -40,5 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (userData && userData.followers) {
         document.getElementById('followersLink').style.display = 'block';
+    }
+    if (userData && userData.following) {
+        document.getElementById('followingLink').style.display = 'block';
     }
 });
