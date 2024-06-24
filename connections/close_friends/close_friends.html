@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Close Friends</title>
+    <link rel="stylesheet" href="close_friends.css">
+</head>
+<body>
+    <a href="../../index.html">Home</a>
+    <h1>Close Friends</h1>
+    <div id="filters-container">
+        <div id="sort-options-container">
+            <label for="sortOptions">Sort: </label>
+            <select id="sortOptions" class="options">
+                <option value="timestamp-desc">Newest</option>
+                <option value="timestamp-asc">Oldest</option>
+                <option value="value-asc">Alphabetical A-Z</option>
+                <option value="value-desc">Alphabetical Z-A</option>
+            </select>
+        </div>
+        <div id="year-options-container">
+            <label for="yearOptions">Year: </label>
+            <select id="yearOptions" class="options">
+                <!-- Options will be generated dynamically -->
+            </select>
+        </div>
+        <div id="search-container">
+            <label for="searchInput">Search: </label>
+            <input type="text" id="searchInput" class="options" placeholder="Enter username">
+        </div>
+        <a href="#" id="analysis-link" onclick="openAnalysis()">Show Analysis</a>
+    </div>
+    <div id="friend-count"></div> <!-- Placeholder for friend count -->
+    <div id="results"></div>
+    
+    <script src="close_friends.js"></script>
+</body>
+</html>

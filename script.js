@@ -11,7 +11,8 @@ async function analyzeFolder() {
     const userData = {
         followers: [],
         following: [],
-        blocked: []
+        blocked_accounts: [],
+        close_friends: [] // Make sure to define this array
     };
 
     for (let file of files) {
@@ -36,10 +37,17 @@ async function analyzeFolder() {
                 href: fg.string_list_data[0].href,
                 timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
             }));
+        } else if (file.name === 'close_friends.json') {
+            const close_friends_JSON = JSON.parse(await file.text());
+            userData.close_friends = close_friends_JSON.relationships_close_friends.map(fg => ({
+                username: fg.string_list_data[0].value,
+                href: fg.string_list_data[0].href,
+                timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
+            }));
         }
     }
 
-    if (userData.followers.length > 0 || userData.following.length > 0 || userData.blocked.length > 0) {
+    if (userData.followers.length > 0 || userData.following.length > 0 || userData.blocked_accounts.length > 0 || userData.close_friends.length > 0) {
         // Store the entire userData object in local storage
         localStorage.setItem('userData', JSON.stringify(userData));
 
@@ -52,6 +60,9 @@ async function analyzeFolder() {
         }
         if (userData.blocked_accounts.length > 0) {
             document.getElementById('blockedAccountsLink').style.display = 'block';
+        }
+        if (userData.close_friends.length > 0) {
+            document.getElementById('closeFriendsLink').style.display = 'block';
         }
     } else {
         alert('No specific files found.');
@@ -94,14 +105,17 @@ document.getElementById('folderInput').addEventListener('change', analyzeFolder)
 document.addEventListener('DOMContentLoaded', () => {
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (userData) {
-        if (userData.followers.length > 0) {
+        if (userData.followers && userData.followers.length > 0) {
             document.getElementById('followersLink').style.display = 'block';
         }
-        if (userData.following.length > 0) {
+        if (userData.following && userData.following.length > 0) {
             document.getElementById('followingLink').style.display = 'block';
         }
-        if (userData.blocked_accounts.length > 0) {
+        if (userData.blocked_accounts && userData.blocked_accounts.length > 0) {
             document.getElementById('blockedAccountsLink').style.display = 'block';
+        }
+        if (userData.close_friends && userData.close_friends.length > 0) {
+            document.getElementById('closeFriendsLink').style.display = 'block';
         }
     }
 });
