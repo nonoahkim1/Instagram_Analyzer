@@ -1,15 +1,30 @@
 // connections/followers/analysis.js
+
 let opacityEnabled = false; // State variable to track if opacity variance is enabled
 let fontSizeEnabled = false; // State variable to track if font size variance is enabled
 let highlightEnabled = false; // State variable to track if highlighting is enabled
 
 let accumulatingChart, yearlyChart, monthlyCharts = [];
 
+// Function to convert timestamp to a readable format
+function convertTimestamp(timestamp) {
+    const dtObject = new Date(timestamp * 1000); // Convert to milliseconds
+    return dtObject.toLocaleString('en-US', { 
+        month: 'long', day: 'numeric', year: 'numeric', 
+        hour: 'numeric', minute: 'numeric', hour12: true 
+    });
+}
+
+// Function to get the year from a timestamp
+function getYearFromTimestamp(timestamp) {
+    const dtObject = new Date(timestamp * 1000); // Convert to milliseconds
+    return dtObject.getFullYear();
+}
+
 function renderAnalysis(followers) {
     const followersByYear = getFollowersByYear(followers);
     const followersByMonth = getFollowersByMonth(followers);
 
-    renderFollowerStats(followers);
     renderAccumulatingGraph(followersByYear);
     renderYearlyGraph(followersByYear);
     renderMonthlyGraphs(followersByMonth);
@@ -29,14 +44,20 @@ function renderAnalysis(followers) {
         highlightEnabled = !highlightEnabled; // Toggle state
         renderFollowersTable(followersByMonth); // Re-render table
     };
+
+    // Display follower stats
+    const followerUsernames = JSON.parse(localStorage.getItem('userData')).followers.map(follower => follower.username);
+    const notFollowingBackCount = followers.filter(follower => !followerUsernames.includes(follower.username)).length;
+    const totalFollowersCount = followers.length;
+
+    document.getElementById('follower-stats').innerHTML = `Total Followers: ${totalFollowersCount}, Not followed Back: ${notFollowingBackCount}`;
 }
 
 function getFollowersByYear(followers) {
-    const flatFollowers = followers.flatMap(fg => fg.string_list_data);
     const followersByYear = {};
 
-    flatFollowers.forEach(follower => {
-        const year = new Date((follower.timestamp - 28800) * 1000).getFullYear();
+    followers.forEach(follower => {
+        const year = getYearFromTimestamp(follower.timestamp);
         if (!followersByYear[year]) {
             followersByYear[year] = 0;
         }
@@ -47,11 +68,10 @@ function getFollowersByYear(followers) {
 }
 
 function getFollowersByMonth(followers) {
-    const flatFollowers = followers.flatMap(fg => fg.string_list_data);
     const followersByMonth = {};
 
-    flatFollowers.forEach(follower => {
-        const month = new Date((follower.timestamp - 28800) * 1000).toISOString().slice(0, 7);
+    followers.forEach(follower => {
+        const month = new Date(follower.timestamp * 1000).toISOString().slice(0, 7);
         if (!followersByMonth[month]) {
             followersByMonth[month] = 0;
         }
@@ -59,16 +79,6 @@ function getFollowersByMonth(followers) {
     });
 
     return followersByMonth;
-}
-
-function renderFollowerStats(followers) {
-    const flatFollowers = followers.flatMap(fg => fg.string_list_data);
-    const totalFollowers = flatFollowers.length;
-    const followingUsernames = JSON.parse(localStorage.getItem('userData')).following.flatMap(fg => fg.string_list_data.map(fd => fd.value));
-    const notFollowingBackCount = flatFollowers.filter(follower => !followingUsernames.includes(follower.value)).length;
-
-    const statsDiv = document.getElementById('follower-stats');
-    statsDiv.innerHTML = `Total Followers: ${totalFollowers}, Not Following Back: ${notFollowingBackCount}`;
 }
 
 function renderAccumulatingGraph(followersByYear) {
@@ -268,3 +278,10 @@ function renderFollowersTable(followersByMonth) {
     // Apply table styles
     table.classList.add('styled-table');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData && userData.followers) {
+        renderAnalysis(userData.followers);
+    }
+});
