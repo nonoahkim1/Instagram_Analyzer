@@ -1,3 +1,4 @@
+/* connections/style.css */
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
@@ -19,7 +20,7 @@ a:hover {
     text-decoration: underline;
 }
 
-.friend {
+.follower, .friend, .blocked {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     padding: 10px;
@@ -42,4 +43,8 @@ a:hover {
     display: flex;
     align-items: center;
     gap: 20px; /* Adjust the gap as needed */
+}
+
+.not-following-back {
+    background-color: #FFCCCC;
 }

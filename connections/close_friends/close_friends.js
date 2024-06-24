@@ -1,3 +1,4 @@
+// connections/close_friends/close_friends.js
 let closeFriendsData = [];
 
 function convertTimestamp(timestamp) {
@@ -13,8 +14,8 @@ function getYearFromTimestamp(timestamp) {
     return dtObject.getFullYear();
 }
 
-function generateYearOptions(close_friends) {
-    const years = [...new Set(close_friends.map(friend => getYearFromTimestamp(friend.timestamp)))].sort((a, b) => b - a);
+function generateYearOptions(closeFriends) {
+    const years = [...new Set(closeFriends.map(friend => getYearFromTimestamp(friend.timestamp)))].sort((a, b) => b - a);
 
     const yearOptions = document.getElementById('yearOptions');
     yearOptions.innerHTML = ''; // Clear existing options
@@ -36,13 +37,13 @@ function generateYearOptions(close_friends) {
         const sortOptions = document.getElementById('sortOptions');
         const selectedOption = sortOptions.value;
         const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-        displayFriends(close_friends, selectedYear, selectedOption, searchQuery);
+        displayCloseFriends(closeFriends, selectedYear, selectedOption, searchQuery);
     };
 }
 
-function displayFriends(close_friends, selectedYear = null, sortOption = 'timestamp-desc', searchQuery = '') {
-    closeFriendsData = close_friends; // Store close friends data for search functionality
-    generateYearOptions(close_friends);
+function displayCloseFriends(closeFriends, selectedYear = null, sortOption = 'timestamp-desc', searchQuery = '') {
+    closeFriendsData = closeFriends; // Store close friends data for search functionality
+    generateYearOptions(closeFriends);
 
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
@@ -55,35 +56,35 @@ function displayFriends(close_friends, selectedYear = null, sortOption = 'timest
         const selectedOption = sortOptions.value;
         const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
         const searchQuery = searchInput.value.toLowerCase();
-        displaySortedFriends(selectedOption, selectedYear, searchQuery);
+        displaySortedCloseFriends(selectedOption, selectedYear, searchQuery);
     };
 
     searchInput.oninput = function () {
         const searchQuery = searchInput.value.toLowerCase();
         const selectedOption = sortOptions.value;
         const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
-        displaySortedFriends(selectedOption, selectedYear, searchQuery);
+        displaySortedCloseFriends(selectedOption, selectedYear, searchQuery);
     };
 
-    displaySortedFriends(sortOption, selectedYear, searchQuery);
+    displaySortedCloseFriends(sortOption, selectedYear, searchQuery);
 }
 
-function displaySortedFriends(sortOption, selectedYear, searchQuery) {
+function displaySortedCloseFriends(sortOption, selectedYear, searchQuery) {
     const resultsDiv = document.getElementById('results');
 
     const [key, order] = sortOption.split('-');
-    let filteredFriends = closeFriendsData;
+    let filteredCloseFriends = closeFriendsData;
 
-    // Filter friends by the selected year if applicable
+    // Filter close friends by the selected year if applicable
     if (selectedYear !== null) {
-        filteredFriends = filteredFriends.filter(friend => getYearFromTimestamp(friend.timestamp) === selectedYear);
+        filteredCloseFriends = filteredCloseFriends.filter(friend => getYearFromTimestamp(friend.timestamp) === selectedYear);
     }
 
-    // Filter friends by the search query
-    filteredFriends = filteredFriends.filter(friend => friend.username.toLowerCase().includes(searchQuery));
+    // Filter close friends by the search query
+    filteredCloseFriends = filteredCloseFriends.filter(friend => friend.username.toLowerCase().includes(searchQuery));
 
-    // Sort friends based on the selected option
-    const sortedFriends = filteredFriends.sort((a, b) => {
+    // Sort close friends based on the selected option
+    const sortedCloseFriends = filteredCloseFriends.sort((a, b) => {
         if (key === 'timestamp') {
             return order === 'asc' ? a.timestamp - b.timestamp : b.timestamp - a.timestamp;
         } else {
@@ -93,7 +94,7 @@ function displaySortedFriends(sortOption, selectedYear, searchQuery) {
 
     resultsDiv.innerHTML = '';
 
-    sortedFriends.forEach(friend => {
+    sortedCloseFriends.forEach(friend => {
         const friendDiv = document.createElement('div');
         friendDiv.classList.add('friend');
 
@@ -111,14 +112,14 @@ function displaySortedFriends(sortOption, selectedYear, searchQuery) {
         resultsDiv.appendChild(friendDiv);
     });
 
-    updateFriendCount(sortedFriends.length);
+    updateCloseFriendCount(sortedCloseFriends.length);
 
     // Update the dropdown to reflect the selected year
     const yearOptions = document.getElementById('yearOptions');
     yearOptions.value = selectedYear === null ? 'all' : selectedYear;
 }
 
-function updateFriendCount(count) {
+function updateCloseFriendCount(count) {
     document.getElementById('friend-count').innerHTML = `Number of close friends: ${count}`;
 }
 
@@ -134,9 +135,9 @@ function openAnalysis() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const userData = JSON.parse(localStorage.getItem('userData'));
-    if (userData && userData.close_friends) {
+    if (userData) {
         closeFriendsData = userData.close_friends;
-        displayFriends(closeFriendsData);
+        displayCloseFriends(closeFriendsData);
     } else {
         document.getElementById('results').innerHTML = 'No close friends data found.';
     }

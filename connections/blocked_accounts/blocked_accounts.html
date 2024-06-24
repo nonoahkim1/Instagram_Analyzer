@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blocked Accounts</title>
-    <link rel="stylesheet" href="blocked_accounts.css">
+    <title>Following</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <a href="../../index.html">Home</a>
-    <h1>Blocked Accounts</h1>
-    <div>Accounts that you've blocked</div>
+    <h1>Following</h1>
     <div id="filters-container">
         <div id="sort-options-container">
             <label for="sortOptions">Sort: </label>
@@ -31,11 +30,15 @@
             <label for="searchInput">Search: </label>
             <input type="text" id="searchInput" class="options" placeholder="Enter username">
         </div>
+        <div id="not-following-back-container">
+            <input type="checkbox" id="notFollowingBack" class="options">
+            <label for="notFollowingBack">Not Following Back</label>
+        </div>
         <a href="#" id="analysis-link" onclick="openAnalysis()">Show Analysis</a>
     </div>
-    <div id="blocked-count"></div> <!-- Placeholder for blocked count -->
+    <div id="follower-count"></div> <!-- Placeholder for follower count -->
     <div id="results"></div>
     
-    <script src="blocked_accounts.js"></script>
+    <script src="following.js"></script>
 </body>
 </html>

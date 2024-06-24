@@ -1,3 +1,4 @@
+// connections/close_friends/analysis.js
 let opacityEnabled = false; // State variable to track if opacity variance is enabled
 let fontSizeEnabled = false; // State variable to track if font size variance is enabled
 let highlightEnabled = false; // State variable to track if highlighting is enabled
@@ -19,9 +20,9 @@ function getYearFromTimestamp(timestamp) {
     return dtObject.getFullYear();
 }
 
-function renderAnalysis(close_friends) {
-    const closeFriendsByYear = getCloseFriendsByYear(close_friends);
-    const closeFriendsByMonth = getCloseFriendsByMonth(close_friends);
+function renderAnalysis(closeFriends) {
+    const closeFriendsByYear = getCloseFriendsByYear(closeFriends);
+    const closeFriendsByMonth = getCloseFriendsByMonth(closeFriends);
 
     renderAccumulatingGraph(closeFriendsByYear);
     renderYearlyGraph(closeFriendsByYear);
@@ -43,18 +44,18 @@ function renderAnalysis(close_friends) {
         renderCloseFriendsTable(closeFriendsByMonth); // Re-render table
     };
 
-    // Display close friends stats
+    // Display friend stats
     const closeFriendUsernames = JSON.parse(localStorage.getItem('userData')).close_friends.map(friend => friend.username);
-    const notFollowingBackCount = close_friends.filter(friend => !closeFriendUsernames.includes(friend.username)).length;
-    const totalCloseFriendsCount = close_friends.length;
+    const notFollowingBackCount = closeFriends.filter(friend => !closeFriendUsernames.includes(friend.username)).length;
+    const totalCloseFriendsCount = closeFriends.length;
 
     document.getElementById('friend-stats').innerHTML = `Total Close Friends: ${totalCloseFriendsCount}, Not followed Back: ${notFollowingBackCount}`;
 }
 
-function getCloseFriendsByYear(close_friends) {
+function getCloseFriendsByYear(closeFriends) {
     const closeFriendsByYear = {};
 
-    close_friends.forEach(friend => {
+    closeFriends.forEach(friend => {
         const year = getYearFromTimestamp(friend.timestamp);
         if (!closeFriendsByYear[year]) {
             closeFriendsByYear[year] = 0;
@@ -65,10 +66,10 @@ function getCloseFriendsByYear(close_friends) {
     return closeFriendsByYear;
 }
 
-function getCloseFriendsByMonth(close_friends) {
+function getCloseFriendsByMonth(closeFriends) {
     const closeFriendsByMonth = {};
 
-    close_friends.forEach(friend => {
+    closeFriends.forEach(friend => {
         const month = new Date(friend.timestamp * 1000).toISOString().slice(0, 7);
         if (!closeFriendsByMonth[month]) {
             closeFriendsByMonth[month] = 0;
@@ -215,7 +216,7 @@ function renderCloseFriendsTable(closeFriendsByMonth) {
         yearCell.textContent = year;
         row.appendChild(yearCell);
 
-        // Get min and max close friends for the year
+        // Get min and max friends for the year
         const counts = Array.from({ length: 12 }, (_, month) => {
             const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
             return closeFriendsByMonth[monthKey] || 0;
@@ -238,16 +239,16 @@ function renderCloseFriendsTable(closeFriendsByMonth) {
 
             if (fontSizeEnabled && minCount !== maxCount) {  // Avoid division by zero
                 const fontSize = 12 + 8 * ((count - minCount) / (maxCount - minCount)); // Adjust this line to set font size
-                monthCell.style.fontSize = `${fontSize}px`; // Apply font size based on close friend gain
+                monthCell.style.fontSize = `${fontSize}px`; // Apply font size based on friend gain
             } else {
                 monthCell.style.fontSize = '16px'; // Default font size
             }
 
             if (highlightEnabled) {
                 if (count === minCount) {
-                    monthCell.classList.add('highlight-least'); // Highlight least close friends gained month
+                    monthCell.classList.add('highlight-least'); // Highlight least friends gained month
                 } else if (count === maxCount) {
-                    monthCell.classList.add('highlight-most'); // Highlight most close friends gained month
+                    monthCell.classList.add('highlight-most'); // Highlight most friends gained month
                 } else {
                     monthCell.classList.remove('highlight-least', 'highlight-most'); // Clear background color
                 }
