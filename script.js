@@ -8,32 +8,54 @@ async function analyzeFolder() {
         return;
     }
 
-    const userData = {};
+    const userData = {
+        followers: [],
+        following: [],
+        blocked: []
+    };
 
     for (let file of files) {
+        
+
         if (file.name === 'followers_1.json') {
-            userData.followers = JSON.parse(await file.text());
+            const followers_JSON = JSON.parse(await file.text());
+            userData.followers = followers_JSON.map(fg => ({
+                username: fg.string_list_data[0].value,
+                href: fg.string_list_data[0].href,
+                timestamp: fg.string_list_data[0].timestamp
+            }));
+            // console.log(userData.followers) //
         } else if (file.name === 'following.json') {
-            const followingData = JSON.parse(await file.text());
-            userData.following = followingData.relationships_following;
+            const following_JSON = JSON.parse(await file.text());
+            userData.following = following_JSON.relationships_following.map(fg => ({
+                username: fg.string_list_data[0].value,
+                href: fg.string_list_data[0].href,
+                timestamp: fg.string_list_data[0].timestamp
+            }));
+            // console.log(userData.following) //
         } else if (file.name === 'blocked_accounts.json') {
-            const blockedData = JSON.parse(await file.text());
-            userData.blocked = blockedData.relationships_blocked_users;
+            const blocked_accounts_JSON = JSON.parse(await file.text());
+            userData.blocked_accounts = blocked_accounts_JSON.relationships_blocked_users.map(fg => ({
+                username: fg.title,
+                href: fg.string_list_data[0].href,
+                timestamp: fg.string_list_data[0].timestamp
+            }));
+            // console.log(userData.blocked_accounts)
         }
     }
 
-    if (Object.keys(userData).length > 0) {
+    if (userData.followers.length > 0 || userData.following.length > 0 || userData.blocked.length > 0) {
         // Store the entire userData object in local storage
         localStorage.setItem('userData', JSON.stringify(userData));
 
         // Display the links if data is present
-        if (userData.followers) {
+        if (userData.followers.length > 0) {
             document.getElementById('followersLink').style.display = 'block';
         }
-        if (userData.following) {
+        if (userData.following.length > 0) {
             document.getElementById('followingLink').style.display = 'block';
         }
-        if (userData.blocked) {
+        if (userData.blocked_accounts.length > 0) {
             document.getElementById('blockedAccountsLink').style.display = 'block';
         }
     } else {
@@ -47,13 +69,13 @@ document.getElementById('folderInput').addEventListener('change', analyzeFolder)
 document.addEventListener('DOMContentLoaded', () => {
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (userData) {
-        if (userData.followers) {
+        if (userData.followers.length > 0) {
             document.getElementById('followersLink').style.display = 'block';
         }
-        if (userData.following) {
+        if (userData.following.length > 0) {
             document.getElementById('followingLink').style.display = 'block';
         }
-        if (userData.blocked) {
+        if (userData.blocked_accounts.length > 0) {
             document.getElementById('blockedAccountsLink').style.display = 'block';
         }
     }
