@@ -1,9 +1,25 @@
 // connections/following/analysis.js
+
 let opacityEnabled = false; // State variable to track if opacity variance is enabled
 let fontSizeEnabled = false; // State variable to track if font size variance is enabled
 let highlightEnabled = false; // State variable to track if highlighting is enabled
 
 let accumulatingChart, yearlyChart, monthlyCharts = [];
+
+// Function to convert timestamp to a readable format
+function convertTimestamp(timestamp) {
+    const dtObject = new Date(timestamp * 1000); // Convert to milliseconds
+    return dtObject.toLocaleString('en-US', { 
+        month: 'long', day: 'numeric', year: 'numeric', 
+        hour: 'numeric', minute: 'numeric', hour12: true 
+    });
+}
+
+// Function to get the year from a timestamp
+function getYearFromTimestamp(timestamp) {
+    const dtObject = new Date(timestamp * 1000); // Convert to milliseconds
+    return dtObject.getFullYear();
+}
 
 function renderAnalysis(following) {
     const followingByYear = getFollowingByYear(following);
@@ -29,20 +45,19 @@ function renderAnalysis(following) {
         renderFollowingTable(followingByMonth); // Re-render table
     };
 
-    // Display follower stats
-    const followerUsernames = JSON.parse(localStorage.getItem('userData')).followers.flatMap(fg => fg.string_list_data.map(fd => fd.value));
-    const notFollowingBackCount = following.flatMap(fg => fg.string_list_data).filter(follower => !followerUsernames.includes(follower.value)).length;
-    const totalFollowingCount = following.flatMap(fg => fg.string_list_data).length;
+    // Display following stats
+    const followingUsernames = JSON.parse(localStorage.getItem('userData')).following.map(following => following.username);
+    const notFollowingBackCount = following.filter(follow => !followingUsernames.includes(follow.username)).length;
+    const totalFollowingCount = following.length;
 
-    document.getElementById('follower-stats').innerHTML = `Total Following: ${totalFollowingCount}, Not followed Back: ${notFollowingBackCount}`;
+    document.getElementById('following-stats').innerHTML = `Total Following: ${totalFollowingCount}, Not followed Back: ${notFollowingBackCount}`;
 }
 
 function getFollowingByYear(following) {
-    const flatFollowing = following.flatMap(fg => fg.string_list_data);
     const followingByYear = {};
 
-    flatFollowing.forEach(follower => {
-        const year = new Date((follower.timestamp - 28800) * 1000).getFullYear();
+    following.forEach(follow => {
+        const year = getYearFromTimestamp(follow.timestamp);
         if (!followingByYear[year]) {
             followingByYear[year] = 0;
         }
@@ -53,11 +68,10 @@ function getFollowingByYear(following) {
 }
 
 function getFollowingByMonth(following) {
-    const flatFollowing = following.flatMap(fg => fg.string_list_data);
     const followingByMonth = {};
 
-    flatFollowing.forEach(follower => {
-        const month = new Date((follower.timestamp - 28800) * 1000).toISOString().slice(0, 7);
+    following.forEach(follow => {
+        const month = new Date(follow.timestamp * 1000).toISOString().slice(0, 7);
         if (!followingByMonth[month]) {
             followingByMonth[month] = 0;
         }
@@ -226,7 +240,7 @@ function renderFollowingTable(followingByMonth) {
 
             if (fontSizeEnabled && minCount !== maxCount) {  // Avoid division by zero
                 const fontSize = 12 + 8 * ((count - minCount) / (maxCount - minCount)); // Adjust this line to set font size
-                monthCell.style.fontSize = `${fontSize}px`; // Apply font size based on follower gain
+                monthCell.style.fontSize = `${fontSize}px`; // Apply font size based on following gain
             } else {
                 monthCell.style.fontSize = '16px'; // Default font size
             }
@@ -264,3 +278,10 @@ function renderFollowingTable(followingByMonth) {
     // Apply table styles
     table.classList.add('styled-table');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData && userData.following) {
+        renderAnalysis(userData.following);
+    }
+});
