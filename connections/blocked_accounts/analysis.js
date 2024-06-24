@@ -1,13 +1,29 @@
 // connections/blocked_accounts/analysis.js
+
 let opacityEnabled = false; // State variable to track if opacity variance is enabled
 let fontSizeEnabled = false; // State variable to track if font size variance is enabled
 let highlightEnabled = false; // State variable to track if highlighting is enabled
 
 let accumulatingChart, yearlyChart, monthlyCharts = [];
 
-function renderAnalysis(blocked) {
-    const blockedByYear = getBlockedByYear(blocked);
-    const blockedByMonth = getBlockedByMonth(blocked);
+// Function to convert timestamp to a readable format
+function convertTimestamp(timestamp) {
+    const dtObject = new Date(timestamp * 1000); // Convert to milliseconds
+    return dtObject.toLocaleString('en-US', { 
+        month: 'long', day: 'numeric', year: 'numeric', 
+        hour: 'numeric', minute: 'numeric', hour12: true 
+    });
+}
+
+// Function to get the year from a timestamp
+function getYearFromTimestamp(timestamp) {
+    const dtObject = new Date(timestamp * 1000); // Convert to milliseconds
+    return dtObject.getFullYear();
+}
+
+function renderAnalysis(blocked_accounts) {
+    const blockedByYear = getBlockedByYear(blocked_accounts);
+    const blockedByMonth = getBlockedByMonth(blocked_accounts);
 
     renderAccumulatingGraph(blockedByYear);
     renderYearlyGraph(blockedByYear);
@@ -29,17 +45,18 @@ function renderAnalysis(blocked) {
         renderBlockedTable(blockedByMonth); // Re-render table
     };
 
-    // Display blocked stats
-    const totalBlockedCount = blocked.flatMap(bu => bu.string_list_data).length;
+    // Display blocked account stats
+    const blockedUsernames = JSON.parse(localStorage.getItem('userData')).blocked_accounts.map(blocked => blocked.username);
+    const totalBlockedCount = blocked_accounts.length;
+
     document.getElementById('blocked-stats').innerHTML = `Total Blocked Accounts: ${totalBlockedCount}`;
 }
 
-function getBlockedByYear(blocked) {
-    const flatBlocked = blocked.flatMap(bu => bu.string_list_data);
+function getBlockedByYear(blocked_accounts) {
     const blockedByYear = {};
 
-    flatBlocked.forEach(user => {
-        const year = new Date((user.timestamp - 28800) * 1000).getFullYear();
+    blocked_accounts.forEach(blocked => {
+        const year = getYearFromTimestamp(blocked.timestamp);
         if (!blockedByYear[year]) {
             blockedByYear[year] = 0;
         }
@@ -49,12 +66,11 @@ function getBlockedByYear(blocked) {
     return blockedByYear;
 }
 
-function getBlockedByMonth(blocked) {
-    const flatBlocked = blocked.flatMap(bu => bu.string_list_data);
+function getBlockedByMonth(blocked_accounts) {
     const blockedByMonth = {};
 
-    flatBlocked.forEach(user => {
-        const month = new Date((user.timestamp - 28800) * 1000).toISOString().slice(0, 7);
+    blocked_accounts.forEach(blocked => {
+        const month = new Date(blocked.timestamp * 1000).toISOString().slice(0, 7);
         if (!blockedByMonth[month]) {
             blockedByMonth[month] = 0;
         }
@@ -111,7 +127,7 @@ function renderYearlyGraph(blockedByYear) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Blocked Accounts Gained Per Year',
+                label: 'Blocked Accounts Per Year',
                 data: data,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -156,7 +172,7 @@ function renderMonthlyGraphs(blockedByMonth) {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: `Blocked Accounts Gained in ${year}`,
+                    label: `Blocked Accounts in ${year}`,
                     data: data,
                     backgroundColor: 'rgba(153, 102, 255, 0.2)',
                     borderColor: 'rgba(153, 102, 255, 1)',
@@ -200,7 +216,7 @@ function renderBlockedTable(blockedByMonth) {
         yearCell.textContent = year;
         row.appendChild(yearCell);
 
-        // Get min and max blocked for the year
+        // Get min and max blocked accounts for the year
         const counts = Array.from({ length: 12 }, (_, month) => {
             const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
             return blockedByMonth[monthKey] || 0;
@@ -230,9 +246,9 @@ function renderBlockedTable(blockedByMonth) {
 
             if (highlightEnabled) {
                 if (count === minCount) {
-                    monthCell.classList.add('highlight-least'); // Highlight least blocked gained month
+                    monthCell.classList.add('highlight-least'); // Highlight least blocked accounts month
                 } else if (count === maxCount) {
-                    monthCell.classList.add('highlight-most'); // Highlight most blocked gained month
+                    monthCell.classList.add('highlight-most'); // Highlight most blocked accounts month
                 } else {
                     monthCell.classList.remove('highlight-least', 'highlight-most'); // Clear background color
                 }
@@ -261,3 +277,10 @@ function renderBlockedTable(blockedByMonth) {
     // Apply table styles
     table.classList.add('styled-table');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData && userData.blocked_accounts) {
+        renderAnalysis(userData.blocked_accounts);
+    }
+});
