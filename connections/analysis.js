@@ -1,5 +1,4 @@
-// connections/blocked_accounts/analysis.js
-
+// connections/analysis.js
 let opacityEnabled = false; // State variable to track if opacity variance is enabled
 let fontSizeEnabled = false; // State variable to track if font size variance is enabled
 let highlightEnabled = false; // State variable to track if highlighting is enabled
@@ -21,74 +20,74 @@ function getYearFromTimestamp(timestamp) {
     return dtObject.getFullYear();
 }
 
-function renderAnalysis(blocked_accounts) {
-    const blockedByYear = getBlockedByYear(blocked_accounts);
-    const blockedByMonth = getBlockedByMonth(blocked_accounts);
+function renderAnalysis(data, dataType) {
+    document.getElementById('page-title').textContent = formatTitle(dataType) + ' Analysis';
 
-    renderAccumulatingGraph(blockedByYear);
-    renderYearlyGraph(blockedByYear);
-    renderMonthlyGraphs(blockedByMonth);
-    renderBlockedTable(blockedByMonth);
+    const dataByYear = getDataByYear(data);
+    const dataByMonth = getDataByMonth(data);
+
+    renderAccumulatingGraph(dataByYear);
+    renderYearlyGraph(dataByYear);
+    renderMonthlyGraphs(dataByMonth);
+    renderDataTable(dataByMonth);
 
     document.getElementById('toggleOpacity').onclick = function() {
         opacityEnabled = !opacityEnabled; // Toggle state
-        renderBlockedTable(blockedByMonth); // Re-render table
+        renderDataTable(dataByMonth); // Re-render table
     };
 
     document.getElementById('toggleFontSize').onclick = function() {
         fontSizeEnabled = !fontSizeEnabled; // Toggle state
-        renderBlockedTable(blockedByMonth); // Re-render table
+        renderDataTable(dataByMonth); // Re-render table
     };
 
     document.getElementById('highlightBlocks').onclick = function() {
         highlightEnabled = !highlightEnabled; // Toggle state
-        renderBlockedTable(blockedByMonth); // Re-render table
+        renderDataTable(dataByMonth); // Re-render table
     };
-
-    // Display blocked account stats
-    const blockedUsernames = JSON.parse(localStorage.getItem('userData')).blocked_accounts.map(blocked => blocked.username);
-    const totalBlockedCount = blocked_accounts.length;
-
-    document.getElementById('blocked-stats').innerHTML = `Total Blocked Accounts: ${totalBlockedCount}`;
 }
 
-function getBlockedByYear(blocked_accounts) {
-    const blockedByYear = {};
+function formatTitle(dataType) {
+    return document.getElementById('page-title').textContent = dataType.replace(/_/g, ' ').replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+}
 
-    blocked_accounts.forEach(blocked => {
-        const year = getYearFromTimestamp(blocked.timestamp);
-        if (!blockedByYear[year]) {
-            blockedByYear[year] = 0;
+function getDataByYear(data) {
+    const dataByYear = {};
+
+    data.forEach(item => {
+        const year = getYearFromTimestamp(item.timestamp);
+        if (!dataByYear[year]) {
+            dataByYear[year] = 0;
         }
-        blockedByYear[year]++;
+        dataByYear[year]++;
     });
 
-    return blockedByYear;
+    return dataByYear;
 }
 
-function getBlockedByMonth(blocked_accounts) {
-    const blockedByMonth = {};
+function getDataByMonth(data) {
+    const dataByMonth = {};
 
-    blocked_accounts.forEach(blocked => {
-        const month = new Date(blocked.timestamp * 1000).toISOString().slice(0, 7);
-        if (!blockedByMonth[month]) {
-            blockedByMonth[month] = 0;
+    data.forEach(item => {
+        const month = new Date(item.timestamp * 1000).toISOString().slice(0, 7);
+        if (!dataByMonth[month]) {
+            dataByMonth[month] = 0;
         }
-        blockedByMonth[month]++;
+        dataByMonth[month]++;
     });
 
-    return blockedByMonth;
+    return dataByMonth;
 }
 
-function renderAccumulatingGraph(blockedByYear) {
+function renderAccumulatingGraph(dataByYear) {
     if (accumulatingChart) {
         accumulatingChart.destroy();
     }
     
     const ctx = document.getElementById('accumulatingGraph').getContext('2d');
-    const labels = Object.keys(blockedByYear).sort((a, b) => a - b);
+    const labels = Object.keys(dataByYear).sort((a, b) => a - b);
     const data = labels.map((year, index) => {
-        return labels.slice(0, index + 1).reduce((sum, label) => sum + blockedByYear[label], 0);
+        return labels.slice(0, index + 1).reduce((sum, label) => sum + dataByYear[label], 0);
     });
 
     accumulatingChart = new Chart(ctx, {
@@ -96,7 +95,7 @@ function renderAccumulatingGraph(blockedByYear) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Accumulating Blocked Accounts',
+                label: 'Accumulating Data',
                 data: data,
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -113,21 +112,21 @@ function renderAccumulatingGraph(blockedByYear) {
     });
 }
 
-function renderYearlyGraph(blockedByYear) {
+function renderYearlyGraph(dataByYear) {
     if (yearlyChart) {
         yearlyChart.destroy();
     }
 
     const ctx = document.getElementById('yearlyGraph').getContext('2d');
-    const labels = Object.keys(blockedByYear).sort((a, b) => a - b);
-    const data = labels.map(year => blockedByYear[year]);
+    const labels = Object.keys(dataByYear).sort((a, b) => a - b);
+    const data = labels.map(year => dataByYear[year]);
 
     yearlyChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Blocked Accounts Per Year',
+                label: 'Data Gained Per Year',
                 data: data,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -148,14 +147,14 @@ function generateMonthLabels() {
     return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 }
 
-function renderMonthlyGraphs(blockedByMonth) {
+function renderMonthlyGraphs(dataByMonth) {
     monthlyCharts.forEach(chart => chart.destroy());
     monthlyCharts = [];
 
     const container = document.getElementById('monthlyGraphs');
     container.innerHTML = ''; // Clear any existing graphs
 
-    const years = [...new Set(Object.keys(blockedByMonth).map(month => month.slice(0, 4)))];
+    const years = [...new Set(Object.keys(dataByMonth).map(month => month.slice(0, 4)))];
 
     years.forEach(year => {
         const ctx = document.createElement('canvas');
@@ -164,7 +163,7 @@ function renderMonthlyGraphs(blockedByMonth) {
         const labels = generateMonthLabels();
         const data = labels.map((_, monthIndex) => {
             const monthKey = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
-            return blockedByMonth[monthKey] || 0;
+            return dataByMonth[monthKey] || 0;
         });
 
         const monthlyChart = new Chart(ctx, {
@@ -172,7 +171,7 @@ function renderMonthlyGraphs(blockedByMonth) {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: `Blocked Accounts in ${year}`,
+                    label: `Data Gained in ${year}`,
                     data: data,
                     backgroundColor: 'rgba(153, 102, 255, 0.2)',
                     borderColor: 'rgba(153, 102, 255, 1)',
@@ -192,11 +191,11 @@ function renderMonthlyGraphs(blockedByMonth) {
     });
 }
 
-function renderBlockedTable(blockedByMonth) {
-    const table = document.getElementById('blockedTable');
+function renderDataTable(dataByMonth) {
+    const table = document.getElementById('dataTable');
     table.innerHTML = '';
 
-    const years = [...new Set(Object.keys(blockedByMonth).map(month => month.slice(0, 4)))].sort((a, b) => a - b);
+    const years = [...new Set(Object.keys(dataByMonth).map(month => month.slice(0, 4)))].sort((a, b) => a - b);
     const headerRow = document.createElement('tr');
     const monthNames = ['Year', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Total', 'Acc.'];
     
@@ -216,10 +215,10 @@ function renderBlockedTable(blockedByMonth) {
         yearCell.textContent = year;
         row.appendChild(yearCell);
 
-        // Get min and max blocked accounts for the year
+        // Get min and max data for the year
         const counts = Array.from({ length: 12 }, (_, month) => {
             const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
-            return blockedByMonth[monthKey] || 0;
+            return dataByMonth[monthKey] || 0;
         });
         const minCount = Math.min(...counts);
         const maxCount = Math.max(...counts);
@@ -227,7 +226,7 @@ function renderBlockedTable(blockedByMonth) {
         for (let month = 0; month < 12; month++) {
             const monthCell = document.createElement('td');
             const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
-            const count = blockedByMonth[monthKey] || 0;
+            const count = dataByMonth[monthKey] || 0;
             monthCell.textContent = count;
 
             if (opacityEnabled && minCount !== maxCount) {  // Avoid division by zero
@@ -239,16 +238,16 @@ function renderBlockedTable(blockedByMonth) {
 
             if (fontSizeEnabled && minCount !== maxCount) {  // Avoid division by zero
                 const fontSize = 12 + 8 * ((count - minCount) / (maxCount - minCount)); // Adjust this line to set font size
-                monthCell.style.fontSize = `${fontSize}px`; // Apply font size based on blocked gain
+                monthCell.style.fontSize = `${fontSize}px`; // Apply font size based on data gain
             } else {
                 monthCell.style.fontSize = '16px'; // Default font size
             }
 
             if (highlightEnabled) {
                 if (count === minCount) {
-                    monthCell.classList.add('highlight-least'); // Highlight least blocked accounts month
+                    monthCell.classList.add('highlight-least'); // Highlight least data gained month
                 } else if (count === maxCount) {
-                    monthCell.classList.add('highlight-most'); // Highlight most blocked accounts month
+                    monthCell.classList.add('highlight-most'); // Highlight most data gained month
                 } else {
                     monthCell.classList.remove('highlight-least', 'highlight-most'); // Clear background color
                 }
@@ -279,8 +278,10 @@ function renderBlockedTable(blockedByMonth) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dataType = urlParams.get('type');
     const userData = JSON.parse(localStorage.getItem('userData'));
-    if (userData && userData.blocked_accounts) {
-        renderAnalysis(userData.blocked_accounts);
+    if (userData && userData[dataType]) {
+        renderAnalysis(userData[dataType], dataType);
     }
 });

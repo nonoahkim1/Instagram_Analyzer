@@ -12,7 +12,8 @@ async function analyzeFolder() {
         followers: [],
         following: [],
         blocked_accounts: [],
-        close_friends: [] // Make sure to define this array
+        close_friends: [],
+        follow_requests_received: [] // Make sure to define this array
     };
 
     for (let file of files) {
@@ -44,10 +45,17 @@ async function analyzeFolder() {
                 href: fg.string_list_data[0].href,
                 timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
             }));
+        } else if (file.name === "follow_requests_you've_received.json") {
+            const follow_requests_received_JSON = JSON.parse(await file.text());
+            userData.follow_requests_received = follow_requests_received_JSON.relationships_follow_requests_received.map(fg => ({
+                username: fg.string_list_data[0].value,
+                href: fg.string_list_data[0].href,
+                timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
+            }));
         }
     }
 
-    if (userData.followers.length > 0 || userData.following.length > 0 || userData.blocked_accounts.length > 0 || userData.close_friends.length > 0) {
+    if (userData.followers.length > 0 || userData.following.length > 0 || userData.blocked_accounts.length > 0 || userData.close_friends.length > 0 || userData.follow_requests_received.length > 0) {
         // Store the entire userData object in local storage
         localStorage.setItem('userData', JSON.stringify(userData));
 
@@ -63,6 +71,9 @@ async function analyzeFolder() {
         }
         if (userData.close_friends.length > 0) {
             document.getElementById('closeFriendsLink').style.display = 'block';
+        }
+        if (userData.follow_requests_received.length > 0) {
+            document.getElementById('followRequestReceivedLink').style.display = 'block';
         }
     } else {
         alert('No specific files found.');
@@ -116,6 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (userData.close_friends && userData.close_friends.length > 0) {
             document.getElementById('closeFriendsLink').style.display = 'block';
+        }
+        if (userData.follow_requests_received && userData.follow_requests_received.length > 0) {
+            document.getElementById('followRequestReceivedLink').style.display = 'block';
         }
     }
 });
