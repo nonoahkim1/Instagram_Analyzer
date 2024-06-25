@@ -115,7 +115,7 @@ function displaySortedFollowers(sortOption, selectedYear, searchQuery, notFollow
 
     sortedFollowers.forEach(follower => {
         const followerDiv = document.createElement('div');
-        followerDiv.classList.add('follower');
+        followerDiv.classList.add('users');
 
         const usernameLink = document.createElement('a');
         usernameLink.href = follower.href;

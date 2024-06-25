@@ -97,7 +97,7 @@ function displaySortedBlockedAccounts(sortOption, selectedYear, searchQuery) {
 
     sortedBlocked.forEach(blockedAccount => {
         const blockedAccountDiv = document.createElement('div');
-        blockedAccountDiv.classList.add('blocked-user');
+        blockedAccountDiv.classList.add('users');
 
         const usernameLink = document.createElement('a');
         usernameLink.href = blockedAccount.href;

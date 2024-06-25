@@ -4,20 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Following</title>
+    <title>Blocked Accounts</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <a href="../../index.html">Home</a>
-    <h1>Following</h1>
+    <h1>Blocked Accounts</h1>
     <div id="filters-container">
         <div id="sort-options-container">
             <label for="sortOptions">Sort: </label>
             <select id="sortOptions" class="options">
                 <option value="timestamp-desc">Newest</option>
                 <option value="timestamp-asc">Oldest</option>
-                <option value="value-asc">Alphabetical A-Z</option>
-                <option value="value-desc">Alphabetical Z-A</option>
+                <option value="username-asc">Alphabetical A-Z</option>
+                <option value="username-desc">Alphabetical Z-A</option>
             </select>
         </div>
         <div id="year-options-container">
@@ -30,15 +30,11 @@
             <label for="searchInput">Search: </label>
             <input type="text" id="searchInput" class="options" placeholder="Enter username">
         </div>
-        <div id="not-following-back-container">
-            <input type="checkbox" id="notFollowingBack" class="options">
-            <label for="notFollowingBack">Not Following Back</label>
-        </div>
         <a href="#" id="analysis-link" onclick="openAnalysis()">Show Analysis</a>
     </div>
-    <div id="follower-count"></div> <!-- Placeholder for follower count -->
+    <div id="blocked-count"></div> <!-- Placeholder for blocked count -->
     <div id="results"></div>
     
-    <script src="following.js"></script>
+    <script src="blocked_accounts.js"></script>
 </body>
 </html>

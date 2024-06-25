@@ -96,7 +96,7 @@ function displaySortedCloseFriends(sortOption, selectedYear, searchQuery) {
 
     sortedCloseFriends.forEach(friend => {
         const friendDiv = document.createElement('div');
-        friendDiv.classList.add('friend');
+        friendDiv.classList.add('users');
 
         const usernameLink = document.createElement('a');
         usernameLink.href = friend.href;

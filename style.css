@@ -4,8 +4,13 @@ body {
     margin: 20px;
 }
 
-h1, h2 {
+h1 {
     font-size: 24px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 18px;
     margin-bottom: 20px;
 }
 
@@ -28,30 +33,14 @@ a:hover {
     text-decoration: underline;
 }
 
-.follower {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.timestamp {
-    font-size: 12px;
-    color: #555;
-}
-
-.options {
-    margin-bottom: 20px;
-    padding: 5px;
-    font-size: 16px;
-}
-
+/* Classes */
 .links {
     display: none;
 }
 
-#filters-container {
-    display: flex;
-    align-items: center;
-    gap: 20px; /* Adjust the gap as needed */
+/* IDs */
+#connections {
+    border: 1px solid #ddd;
+    padding-left: 30px;
+    margin-top: 20px;
 }
