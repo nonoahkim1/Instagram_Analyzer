@@ -53,14 +53,24 @@ function formatTitle(dataType) {
 
 function getDataByYear(data) {
     const dataByYear = {};
+    const currentYear = new Date().getFullYear();
+    let earliestYear = currentYear;
 
     data.forEach(item => {
         const year = getYearFromTimestamp(item.timestamp);
+        if (year < earliestYear) earliestYear = year;
         if (!dataByYear[year]) {
             dataByYear[year] = 0;
         }
         dataByYear[year]++;
     });
+
+    // Ensure all years from the earliest year to the current year are present
+    for (let year = earliestYear; year <= currentYear; year++) {
+        if (!dataByYear[year]) {
+            dataByYear[year] = 0;
+        }
+    }
 
     return dataByYear;
 }
@@ -90,6 +100,9 @@ function renderAccumulatingGraph(dataByYear) {
         return labels.slice(0, index + 1).reduce((sum, label) => sum + dataByYear[label], 0);
     });
 
+    const maxData = Math.max(...data);
+    const yMax = Math.ceil(maxData * 1.1); // Set y-axis maximum to 10% higher than max data
+
     accumulatingChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -105,7 +118,11 @@ function renderAccumulatingGraph(dataByYear) {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    max: yMax,
+                    ticks: {
+                        stepSize: 1 // Ensure integer increments
+                    }
                 }
             }
         }
@@ -120,6 +137,9 @@ function renderYearlyGraph(dataByYear) {
     const ctx = document.getElementById('yearlyGraph').getContext('2d');
     const labels = Object.keys(dataByYear).sort((a, b) => a - b);
     const data = labels.map(year => dataByYear[year]);
+
+    const maxData = Math.max(...data);
+    const yMax = Math.ceil(maxData * 1.1); // Set y-axis maximum to 10% higher than max data
 
     yearlyChart = new Chart(ctx, {
         type: 'line',
@@ -136,7 +156,11 @@ function renderYearlyGraph(dataByYear) {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    max: yMax,
+                    ticks: {
+                        stepSize: 1 // Ensure integer increments
+                    }
                 }
             }
         }
@@ -166,6 +190,9 @@ function renderMonthlyGraphs(dataByMonth) {
             return dataByMonth[monthKey] || 0;
         });
 
+        const maxData = Math.max(...data);
+        const yMax = Math.ceil(maxData * 1.1); // Set y-axis maximum to 10% higher than max data
+
         const monthlyChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -181,7 +208,11 @@ function renderMonthlyGraphs(dataByMonth) {
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        max: yMax,
+                        ticks: {
+                            stepSize: 1 // Ensure integer increments
+                        }
                     }
                 }
             }
