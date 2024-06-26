@@ -13,7 +13,8 @@ async function analyzeFolder() {
         following: [],
         blocked_accounts: [],
         close_friends: [],
-        follow_requests_received: [] // Make sure to define this array
+        follow_requests_received: [],
+        following_hashtags: [] // Make sure to define this array
     };
 
     for (let file of files) {
@@ -52,10 +53,21 @@ async function analyzeFolder() {
                 href: fg.string_list_data[0].href,
                 timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
             }));
+        } else if (file.name === "following_hashtags.json") {
+            const following_hashtags_JSON = JSON.parse(await file.text());
+            userData.following_hashtags = following_hashtags_JSON.relationships_following_hashtags.map(fg => {
+                const href = convertHashtagHref(fg.string_list_data[0].href);
+                const username = isEnglish(fg.string_list_data[0].value) ? fg.string_list_data[0].value : decodeUsernameFromHref(fg.string_list_data[0].href);
+                return {
+                    username: username,
+                    href: href,
+                    timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
+                };
+            });
         }
     }
 
-    if (userData.followers.length > 0 || userData.following.length > 0 || userData.blocked_accounts.length > 0 || userData.close_friends.length > 0 || userData.follow_requests_received.length > 0) {
+    if (userData.followers.length > 0 || userData.following.length > 0 || userData.blocked_accounts.length > 0 || userData.close_friends.length > 0 || userData.follow_requests_received.length > 0 || userData.following_hashtags.length > 0) {
         // Store the entire userData object in local storage
         localStorage.setItem('userData', JSON.stringify(userData));
 
@@ -74,6 +86,9 @@ async function analyzeFolder() {
         }
         if (userData.follow_requests_received.length > 0) {
             document.getElementById('followRequestReceivedLink').style.display = 'block';
+        }
+        if (userData.following_hashtags.length > 0) {
+            document.getElementById('followingHashtagsLink').style.display = 'block';
         }
     } else {
         alert('No specific files found.');
@@ -110,6 +125,20 @@ function getFirstSundayNovember(year) {
     return date;
 }
 
+function isEnglish(text) {
+    return /^[\x00-\x7F]*$/.test(text);
+}
+
+function convertHashtagHref(href) {
+    const tag = href.split('/').pop();
+    return `https://www.instagram.com/explore/tags/${tag}/`;
+}
+
+function decodeUsernameFromHref(href) {
+    const encodedUsername = href.split('/').pop();
+    return decodeURIComponent(encodedUsername);
+}
+
 document.getElementById('folderInput').addEventListener('change', analyzeFolder);
 
 // Check local storage on page load
@@ -130,6 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (userData.follow_requests_received && userData.follow_requests_received.length > 0) {
             document.getElementById('followRequestReceivedLink').style.display = 'block';
+        }
+        if (userData.following_hashtags && userData.following_hashtags.length > 0) {
+            document.getElementById('followingHashtagsLink').style.display = 'block';
         }
     }
 });
