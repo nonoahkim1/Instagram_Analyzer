@@ -15,7 +15,11 @@ async function analyzeFolder() {
         close_friends: [],
         follow_requests_received: [],
         following_hashtags: [],
-        hide_story_from: [] // Make sure to define this array
+        hide_story_from: [],
+        recent_follow_requests: [],
+        recently_unfollowed_accounts: [],
+        removed_suggestions: [],
+        pending_follow_requests: [] // Make sure to define this array
     };
 
     for (let file of files) {
@@ -72,6 +76,27 @@ async function analyzeFolder() {
                 href: fg.string_list_data[0].href,
                 timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
             }));
+        } else if (file.name === "recent_follow_requests.json") {
+            const recent_follow_requests_JSON = JSON.parse(await file.text());
+            userData.recent_follow_requests = recent_follow_requests_JSON.relationships_permanent_follow_requests.map(fg => ({
+                username: fg.string_list_data[0].value,
+                href: fg.string_list_data[0].href,
+                timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
+            }));
+        } else if (file.name === "recently_unfollowed_accounts.json") {
+            const recently_unfollowed_accounts_JSON = JSON.parse(await file.text());
+            userData.recently_unfollowed_accounts = recently_unfollowed_accounts_JSON.relationships_unfollowed_users.map(fg => ({
+                username: fg.string_list_data[0].value,
+                href: fg.string_list_data[0].href,
+                timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
+            }));
+        } else if (file.name === "removed_suggestions.json") {
+            const removed_suggestions_JSON = JSON.parse(await file.text());
+            userData.removed_suggestions = removed_suggestions_JSON.relationships_dismissed_suggested_users.map(fg => ({
+                username: fg.string_list_data[0].value,
+                href: fg.string_list_data[0].href,
+                timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
+            }));
         } else if (file.name === "pending_follow_requests.json") {
             const pending_follow_requests_JSON = JSON.parse(await file.text());
             userData.pending_follow_requests = pending_follow_requests_JSON.relationships_follow_requests_sent.map(fg => ({
@@ -82,7 +107,7 @@ async function analyzeFolder() {
         }
     }
 
-    if (userData.followers.length > 0 || userData.following.length > 0 || userData.blocked_accounts.length > 0 || userData.close_friends.length > 0 || userData.follow_requests_received.length > 0 || userData.following_hashtags.length > 0) {
+    if (userData.followers.length > 0 || userData.following.length > 0 || userData.blocked_accounts.length > 0 || userData.close_friends.length > 0 || userData.follow_requests_received.length > 0 || userData.following_hashtags.length > 0 || userData.hide_story_from.length > 0 || userData.recent_follow_requests.length > 0 || userData.recently_unfollowed_accounts.length > 0 || userData.removed_suggestions.length > 0 || userData.pending_follow_requests.length > 0) {
         // Store the entire userData object in local storage
         localStorage.setItem('userData', JSON.stringify(userData));
 
@@ -107,6 +132,15 @@ async function analyzeFolder() {
         }
         if (userData.hide_story_from.length > 0) {
             document.getElementById('hideStoryFromLink').style.display = 'block';
+        }
+        if (userData.recent_follow_requests.length > 0) {
+            document.getElementById('recentFollowRequestsLink').style.display = 'block';
+        }
+        if (userData.recently_unfollowed_accounts.length > 0) {
+            document.getElementById('recentlyUnfollowedAccountsLink').style.display = 'block';
+        }
+        if (userData.removed_suggestions.length > 0) {
+            document.getElementById('removedSuggestionsLink').style.display = 'block';
         }
         if (userData.pending_follow_requests.length > 0) {
             document.getElementById('pendingFollowRequestsdLink').style.display = 'block';
@@ -186,6 +220,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (userData.hide_story_from && userData.hide_story_from.length > 0) {
             document.getElementById('hideStoryFromLink').style.display = 'block';
+        }
+        if (userData.recent_follow_requests && userData.recent_follow_requests.length > 0) {
+            document.getElementById('recentFollowRequestsLink').style.display = 'block';
+        }
+        if (userData.recently_unfollowed_accounts && userData.recently_unfollowed_accounts.length > 0) {
+            document.getElementById('recentlyUnfollowedAccountsLink').style.display = 'block';
+        }
+        if (userData.removed_suggestions && userData.removed_suggestions.length > 0) {
+            document.getElementById('removedSuggestionsLink').style.display = 'block';
         }
         if (userData.pending_follow_requests && userData.pending_follow_requests.length > 0) {
             document.getElementById('pendingFollowRequestsdLink').style.display = 'block';
