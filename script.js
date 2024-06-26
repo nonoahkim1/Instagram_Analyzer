@@ -72,6 +72,13 @@ async function analyzeFolder() {
                 href: fg.string_list_data[0].href,
                 timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
             }));
+        } else if (file.name === "pending_follow_requests.json") {
+            const pending_follow_requests_JSON = JSON.parse(await file.text());
+            userData.pending_follow_requests = pending_follow_requests_JSON.relationships_follow_requests_sent.map(fg => ({
+                username: fg.string_list_data[0].value,
+                href: fg.string_list_data[0].href,
+                timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
+            }));
         }
     }
 
@@ -100,6 +107,9 @@ async function analyzeFolder() {
         }
         if (userData.hide_story_from.length > 0) {
             document.getElementById('hideStoryFromLink').style.display = 'block';
+        }
+        if (userData.pending_follow_requests.length > 0) {
+            document.getElementById('pendingFollowRequestsdLink').style.display = 'block';
         }
     } else {
         alert('No specific files found.');
@@ -176,6 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (userData.hide_story_from && userData.hide_story_from.length > 0) {
             document.getElementById('hideStoryFromLink').style.display = 'block';
+        }
+        if (userData.pending_follow_requests && userData.pending_follow_requests.length > 0) {
+            document.getElementById('pendingFollowRequestsdLink').style.display = 'block';
         }
     }
 });
