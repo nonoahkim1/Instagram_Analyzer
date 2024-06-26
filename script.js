@@ -14,7 +14,8 @@ async function analyzeFolder() {
         blocked_accounts: [],
         close_friends: [],
         follow_requests_received: [],
-        following_hashtags: [] // Make sure to define this array
+        following_hashtags: [],
+        hide_story_from: [] // Make sure to define this array
     };
 
     for (let file of files) {
@@ -64,6 +65,13 @@ async function analyzeFolder() {
                     timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
                 };
             });
+        } else if (file.name === "hide_story_from.json") {
+            const hide_story_from_JSON = JSON.parse(await file.text());
+            userData.hide_story_from = hide_story_from_JSON.relationships_hide_stories_from.map(fg => ({
+                username: fg.string_list_data[0].value,
+                href: fg.string_list_data[0].href,
+                timestamp: adjustTimestamp(fg.string_list_data[0].timestamp)
+            }));
         }
     }
 
@@ -89,6 +97,9 @@ async function analyzeFolder() {
         }
         if (userData.following_hashtags.length > 0) {
             document.getElementById('followingHashtagsLink').style.display = 'block';
+        }
+        if (userData.hide_story_from.length > 0) {
+            document.getElementById('hideStoryFromLink').style.display = 'block';
         }
     } else {
         alert('No specific files found.');
@@ -162,6 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (userData.following_hashtags && userData.following_hashtags.length > 0) {
             document.getElementById('followingHashtagsLink').style.display = 'block';
+        }
+        if (userData.hide_story_from && userData.hide_story_from.length > 0) {
+            document.getElementById('hideStoryFromLink').style.display = 'block';
         }
     }
 });
