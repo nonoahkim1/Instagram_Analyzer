@@ -120,7 +120,7 @@ function displaySortedData(sortOption, selectedYear, searchQuery) {
 }
 
 function updateDataCount(count) {
-    document.getElementById('connections-count').innerHTML = `Number of ${dataType.replace('_', ' ')}: ${count}`;
+    document.getElementById('connections-count').innerHTML = `Number of ${dataType.replace(/_/g, ' ')}: ${count}`;
 }
 
 function openAnalysis() {

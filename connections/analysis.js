@@ -48,7 +48,7 @@ function renderAnalysis(data, dataType) {
 }
 
 function formatTitle(dataType) {
-    return document.getElementById('page-title').textContent = dataType.replace(/_/g, ' ').replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+    return dataType.replace(/_/g, ' ').replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
 }
 
 function getDataByYear(data) {

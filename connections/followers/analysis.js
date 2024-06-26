@@ -46,11 +46,12 @@ function renderAnalysis(followers) {
     };
 
     // Display follower stats
-    const followerUsernames = JSON.parse(localStorage.getItem('userData')).followers.map(follower => follower.username);
-    const notFollowingBackCount = followers.filter(follower => !followerUsernames.includes(follower.username)).length;
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    const followingUsernames = userData.following.map(following => following.username);
+    const notFollowedBackCount = followers.filter(follower => !followingUsernames.includes(follower.username)).length;
     const totalFollowersCount = followers.length;
 
-    document.getElementById('follower-stats').innerHTML = `Total Followers: ${totalFollowersCount}, Not followed Back: ${notFollowingBackCount}`;
+    document.getElementById('follower-stats').innerHTML = `Total Followers: ${totalFollowersCount}, Not Followed Back: ${notFollowedBackCount}`;
 }
 
 function getFollowersByYear(followers) {
