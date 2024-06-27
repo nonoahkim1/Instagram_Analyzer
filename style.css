@@ -38,8 +38,7 @@ a:hover {
     display: none;
 }
 
-/* IDs */
-#connections {
+.category {
     border: 1px solid #ddd;
     padding-left: 30px;
     margin-top: 20px;

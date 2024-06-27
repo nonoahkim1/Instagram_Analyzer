@@ -1,4 +1,6 @@
+// activities/comments/comments.js
 let data = [];
+let dataType = 'post_comments';
 
 function convertTimestamp(timestamp) {
     const dtObject = new Date(timestamp * 1000); // Convert to milliseconds
@@ -33,31 +35,56 @@ function generateYearOptions(data) {
 
     yearOptions.onchange = function () {
         const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
-        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-        displayData(data, selectedYear, searchQuery);
+        const sortOptions = document.getElementById('sortOptions');
+        const selectedOption = sortOptions.value;
+        const searchUsername = document.getElementById('searchUsername').value.toLowerCase();
+        const searchComment = document.getElementById('searchComment').value.toLowerCase();
+        displayData(data, selectedYear, selectedOption, searchUsername, searchComment);
     };
 }
 
-function displayData(data, selectedYear = null, searchQuery = '') {
+function displayData(data, selectedYear = null, sortOption = 'timestamp-desc', searchUsername = '', searchComment = '') {
     generateYearOptions(data);
 
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
+    const sortOptions = document.getElementById('sortOptions');
     const yearOptions = document.getElementById('yearOptions');
-    const searchInput = document.getElementById('searchInput');
+    const searchUsernameInput = document.getElementById('searchUsername');
+    const searchCommentInput = document.getElementById('searchComment');
 
-    searchInput.oninput = function () {
-        const searchQuery = searchInput.value.toLowerCase();
+    sortOptions.onchange = function () {
+        const selectedOption = sortOptions.value;
         const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
-        displayFilteredData(selectedYear, searchQuery);
+        const searchUsername = searchUsernameInput.value.toLowerCase();
+        const searchComment = searchCommentInput.value.toLowerCase();
+        displaySortedData(selectedOption, selectedYear, searchUsername, searchComment);
     };
 
-    displayFilteredData(selectedYear, searchQuery);
+    searchUsernameInput.oninput = function () {
+        const searchUsername = searchUsernameInput.value.toLowerCase();
+        const searchComment = searchCommentInput.value.toLowerCase();
+        const selectedOption = sortOptions.value;
+        const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
+        displaySortedData(selectedOption, selectedYear, searchUsername, searchComment);
+    };
+
+    searchCommentInput.oninput = function () {
+        const searchUsername = searchUsernameInput.value.toLowerCase();
+        const searchComment = searchCommentInput.value.toLowerCase();
+        const selectedOption = sortOptions.value;
+        const selectedYear = yearOptions.value === 'all' ? null : parseInt(yearOptions.value);
+        displaySortedData(selectedOption, selectedYear, searchUsername, searchComment);
+    };
+
+    displaySortedData(sortOption, selectedYear, searchUsername, searchComment);
 }
 
-function displayFilteredData(selectedYear, searchQuery) {
+function displaySortedData(sortOption, selectedYear, searchUsername, searchComment) {
     const resultsDiv = document.getElementById('results');
+
+    const [key, order] = sortOption.split('-');
     let filteredData = data;
 
     // Filter data by the selected year if applicable
@@ -65,48 +92,73 @@ function displayFilteredData(selectedYear, searchQuery) {
         filteredData = filteredData.filter(item => getYearFromTimestamp(item.timestamp) === selectedYear);
     }
 
-    // Filter data by the search query
+    // Filter data by the search queries
     filteredData = filteredData.filter(item => 
-        item.comment.toLowerCase().includes(searchQuery) || item.username.toLowerCase().includes(searchQuery)
+        item.username.toLowerCase().includes(searchUsername) && 
+        item.comment.toLowerCase().includes(searchComment)
     );
+
+    // Sort data based on the selected option
+    const sortedData = filteredData.sort((a, b) => {
+        if (key === 'timestamp') {
+            return order === 'asc' ? a.timestamp - b.timestamp : b.timestamp - a.timestamp;
+        } else {
+            return order === 'asc' ? a.username.localeCompare(b.username) : b.username.localeCompare(a.username);
+        }
+    });
 
     resultsDiv.innerHTML = '';
 
-    filteredData.forEach(item => {
+    sortedData.forEach(item => {
         const itemDiv = document.createElement('div');
-        itemDiv.classList.add('comments');
+        itemDiv.classList.add('users');
 
         const ownerDiv = document.createElement('div');
-        ownerDiv.textContent = `Media Owner: ${item.username}`;
+        ownerDiv.classList.add('owner');
+        ownerDiv.textContent = item.username;
         itemDiv.appendChild(ownerDiv);
 
         const commentDiv = document.createElement('div');
-        if (item.comment.startsWith('<img')) {
-            commentDiv.innerHTML = item.comment;
-        } else {
-            commentDiv.textContent = `Comment: ${item.comment}`;
-        }
+        commentDiv.classList.add('comment');
+        commentDiv.innerHTML = item.comment;
         itemDiv.appendChild(commentDiv);
 
-        const timestampDiv = document.createElement('div');
-        timestampDiv.classList.add('timestamp');
-        timestampDiv.textContent = convertTimestamp(item.timestamp);
-        itemDiv.appendChild(timestampDiv);
+        const timestamp = document.createElement('div');
+        timestamp.classList.add('timestamp');
+        timestamp.textContent = convertTimestamp(item.timestamp);
+        itemDiv.appendChild(timestamp);
 
         resultsDiv.appendChild(itemDiv);
     });
 
-    updateDataCount(filteredData.length);
+    updateDataCount(sortedData.length);
+
+    // Update the dropdown to reflect the selected year
+    const yearOptions = document.getElementById('yearOptions');
+    yearOptions.value = selectedYear === null ? 'all' : selectedYear;
 }
 
 function updateDataCount(count) {
     document.getElementById('comments-count').innerHTML = `Number of comments: ${count}`;
 }
 
+function openAnalysis() {
+    const analysisWindow = window.open('analysis.html', 'Analysis', 'width=800,height=600');
+    analysisWindow.onload = function () {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        if (userData && userData[dataType]) {
+            analysisWindow.renderAnalysis(userData[dataType], dataType);
+        }
+    };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    dataType = urlParams.get('type');
     const userData = JSON.parse(localStorage.getItem('userData'));
-    if (userData && userData.post_comments) {
-        data = userData.post_comments;
+    if (userData && userData[dataType]) {
+        data = userData[dataType];
+        document.getElementById('page-title').textContent = dataType.replace(/_/g, ' ').replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
         displayData(data);
     } else {
         document.getElementById('results').innerHTML = 'No data found.';

@@ -1,15 +1,25 @@
+<!-- activities/comments/comments.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comments</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Post Comments</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <a href="../../index.html">Home</a>
     <h1 id="page-title">Comments</h1>
     <div id="filters-container">
+        <div id="sort-options-container">
+            <label for="sortOptions">Sort: </label>
+            <select id="sortOptions" class="options">
+                <option value="timestamp-desc">Newest</option>
+                <option value="timestamp-asc">Oldest</option>
+                <option value="username-asc">Alphabetical A-Z</option>
+                <option value="username-desc">Alphabetical Z-A</option>
+            </select>
+        </div>
         <div id="year-options-container">
             <label for="yearOptions">Year: </label>
             <select id="yearOptions" class="options">
@@ -17,9 +27,12 @@
             </select>
         </div>
         <div id="search-container">
-            <label for="searchInput">Search: </label>
-            <input type="text" id="searchInput" class="options" placeholder="Enter comment or media owner">
+            <label for="searchUsername">Search by Media Owner: </label>
+            <input type="text" id="searchUsername" class="options" placeholder="Enter media owner">
+            <label for="searchComment">Search by Comment: </label>
+            <input type="text" id="searchComment" class="options" placeholder="Enter comment">
         </div>
+        <a href="#" id="analysis-link" onclick="openAnalysis()">Show Analysis</a>
     </div>
     <div id="comments-count"></div> <!-- Placeholder for count -->
     <div id="results"></div>
