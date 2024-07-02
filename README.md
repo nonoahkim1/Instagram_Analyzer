@@ -4,6 +4,36 @@
 
 The Instagram Analyzer is a comprehensive web-based application designed to provide deep insights into various aspects of an Instagram account's activity. This project leverages user data exported from Instagram, allowing users to analyze their connections and activities in a structured and meaningful way.
 
+## Key Features
+
+### Connections
+
+* Visualize and analyze **followers, users not following you back, following accounts, users you don't follow back, following hashtags, follow requests received, pending follow requests, recent follow requests, recently unfollowed accounts, close friends, hide story from, blocked accounts, and removed suggestions**, all with options to sort by newest, oldest, and alphabetical, filter by years, and search by username.
+
+### Activities
+* Visualize and analyze the **comments you've posted on your own content or on other people's content** with options to sort by newest, oldest, and alphabetical, filter by years, and search by media owner and username.
+
+### Unsupported by Native Instagram:
+* Viewing Timestamps: Detailed timestamps for each category of users.
+* People Not Following You Back: Identify users who do not follow you back.
+* Pending Follow Requests: Track follow requests that have been sent but not yet accepted.
+* Removed Suggestions: Review accounts that Instagram suggested but were dismissed.
+* Recent Follow Requests: Monitor recent follow requests received.
+
+### Privacy and Data Security
+All the data you process using the Instagram Analyzer remains on your local computer and never passes through our servers. This ensures that your data is secure and private. 
+
+The developer guarantees that:
+
+* Your data is not sold to third parties or used beyond the approved purposes of this application.
+* Your data is not used or transferred for purposes unrelated to the core functionality of this application.
+* Your data is not used or transferred to determine creditworthiness or for lending purposes.
+
+### Technical Details
+* Frontend Technologies: HTML, CSS, and JavaScript for building a responsive and interactive user interface.
+* Data Processing: JavaScript functions to parse and manipulate JSON data files, extracting and transforming relevant information for display and analysis.
+* Local Storage: Data is stored in the browser's local storage, allowing users to revisit their analysis without the need for re-uploading files.
+
 ## Instruction
 
 If you are already logged into Instagram, you can click [this link](https://accountscenter.instagram.com/info_and_permissions/dyi/?entry_point=deeplink_screen) to skip directly to step 3.
