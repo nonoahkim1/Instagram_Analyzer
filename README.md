@@ -8,7 +8,7 @@ If you are already logged into Instagram, you can click [this link](https://acco
 
 **1. Navigate to Your Activity**
 
-Open Instagram, go to the 'More' menu, and select 'Your Activity'.
+Log in to Instagram, go to the 'More' menu, and select 'Your Activity'.
 
 ![1_your_activity](https://github.com/nonoahkim1/Instagram_Analyzer/assets/83424774/9effb7f8-fc79-4886-9f4c-f036b7d311c0)
 
