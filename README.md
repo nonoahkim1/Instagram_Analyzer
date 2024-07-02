@@ -14,11 +14,11 @@ The Instagram Analyzer is a comprehensive web-based application designed to prov
 * Visualize and analyze the **comments you've posted on your own content or on other people's content** with options to sort by newest, oldest, and alphabetical, filter by years, and search by media owner and username.
 
 ### Unsupported by Native Instagram:
-* Viewing Timestamps: Detailed timestamps for each category of users.
-* People Not Following You Back: Identify users who do not follow you back.
-* Pending Follow Requests: Track follow requests that have been sent but not yet accepted.
-* Removed Suggestions: Review accounts that Instagram suggested but were dismissed.
-* Recent Follow Requests: Monitor recent follow requests received.
+* **Viewing Timestamps**: Detailed timestamps for each category of users.
+* **People Not Following You Back**: Identify users who do not follow you back.
+* **Pending Follow Requests**: Track follow requests that have been sent but not yet accepted.
+* **Removed Suggestions**: Review accounts that Instagram suggested but were dismissed.
+* **Recent Follow Requests**: Monitor recent follow requests received.
 
 ### Privacy and Data Security
 All the data you process using the Instagram Analyzer remains on your local computer and never passes through our servers. This ensures that your data is secure and private. 
