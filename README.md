@@ -1,6 +1,4 @@
-# Instagram Analyzer
-
-https://nonoahkim1.github.io/
+# [Instagram Analyzer](https://nonoahkim1.github.io/Instagram_Analyzer/)
 
 ## Instruction
 
@@ -46,3 +44,10 @@ Select 'Data range' as 'All time', set 'Format' to 'JSON', and optionally, set '
 
 ![7_create_files](https://github.com/nonoahkim1/Instagram_Analyzer/assets/83424774/e7982cd3-296c-48c5-91d8-34e3dfafd4d1)
 
+**8. Download the File**
+
+![8_download](https://github.com/nonoahkim1/Instagram_Analyzer/assets/83424774/76d966b5-b7a3-4f95-b4c0-09f200c4ef61)
+
+**9. Extract and Upload**
+
+Unzip the file and upload the extracted folder to the [Instagram Analyzer](https://nonoahkim1.github.io/Instagram_Analyzer/).
