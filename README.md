@@ -5,12 +5,11 @@
 The Instagram Analyzer is a comprehensive web-based application designed to provide deep insights into various aspects of an Instagram account's activity. This project leverages user data exported from Instagram, allowing users to analyze their connections and activities in a structured and meaningful way.
 
 ## Key Features
-
-### Connections
+#### Connections
 
 * Visualize and analyze **followers, users not following you back, following accounts, users you don't follow back, following hashtags, follow requests received, pending follow requests, recent follow requests, recently unfollowed accounts, close friends, hide story from, blocked accounts, and removed suggestions**, all with options to sort by newest, oldest, and alphabetical, filter by years, and search by username.
 
-### Activities
+#### Activities
 * Visualize and analyze the **comments you've posted on your own content or on other people's content** with options to sort by newest, oldest, and alphabetical, filter by years, and search by media owner and username.
 
 ### Unsupported by Native Instagram:
